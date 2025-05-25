@@ -66,6 +66,8 @@ static int	execute_external_command(t_cmd *cmd, t_shell *shell)
 		setup_child_signals();
 		if (setup_redirections(cmd->redirs) == -1)
 			exit(1);
+		if (is_builtin(cmd->args[0]))
+			exit(execute_builtin(cmd, shell));
 		cmd_path = find_command_path(cmd->args[0], shell->env);
 		if (!cmd_path)
 		{
@@ -92,8 +94,13 @@ int	execute_simple_command(t_cmd *cmd, t_shell *shell)
 		return (0);
 	if (is_builtin(cmd->args[0]))
 	{
-		if (setup_redirections(cmd->redirs) == -1)
-			return (1);
+		if (cmd->redirs)
+		{
+			/* Builtin avec redirections : exécuter dans un processus enfant
+			 * pour ne pas affecter le shell parent */
+			return (execute_external_command(cmd, shell));
+		}
+		/* Builtin sans redirection : exécuter directement */
 		return (execute_builtin(cmd, shell));
 	}
 	return (execute_external_command(cmd, shell));
