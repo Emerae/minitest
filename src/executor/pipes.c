@@ -41,11 +41,14 @@ void	setup_pipe_child(int pipe_fd[2], int prev_pipe, int is_last)
 /*
 ** Close pipes in parent after fork
 */
+/*
+** Close pipes in parent after fork
+*/
 void	close_pipe_parent(int pipe_fd[2], int *prev_pipe)
 {
 	if (*prev_pipe != -1)
 		close(*prev_pipe);
-	if (pipe_fd[0] != -1)
+	if (pipe_fd && pipe_fd[0] != -1)
 	{
 		close(pipe_fd[1]);
 		*prev_pipe = pipe_fd[0];

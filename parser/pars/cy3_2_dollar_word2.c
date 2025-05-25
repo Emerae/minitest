@@ -13,6 +13,45 @@ void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s)
 	s->key[s->keylen] = '\0';
 }
 
+/*
+** CORRECTION CRITIQUE - Bug d'expansion de variables
+** 
+** Problème 1 : La boucle while (env[s->e + 1]) ne vérifie JAMAIS le dernier 
+** élément de l'environnement ! 
+** 
+** Exemple concret : Si env = ["PATH=...", "HOME=...", "TEST_VAR=hello", NULL]
+** et qu'on cherche TEST_VAR (index 2), la boucle vérifie :
+** - env[0] car env[1] existe
+** - env[1] car env[2] existe  
+** - STOP car env[3] est NULL
+** -> TEST_VAR n'est jamais vérifié !
+**
+** Conséquence : Toute variable en fin d'environnement est "non trouvée"
+** et supprimée au lieu d'être remplacée par sa valeur.
+**
+** Solution : Vérifier env[s->e] directement au lieu de env[s->e + 1]
+*/
+void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)
+{
+	char	*equal;
+
+	s->e = 0;
+	while (env[s->e])
+	{
+		equal = cy_strchr(env[s->e], '=');
+		if (!equal)
+		{
+			s->e = s->e + 1;
+			continue ;
+		}
+		if ((int)(equal - env[s->e]) == s->keylen &&
+			cy_strncmp(env[s->e], s->key, s->keylen) == 0)
+			break ;
+		s->e = s->e + 1;
+	}
+}
+
+/*
 void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)
 {
 	char	*equal;
@@ -32,6 +71,7 @@ void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)
 		s->e = s->e + 1;
 	}
 }
+*/
 
 int	cy3_handle_dollar_word_2a(t_input *current, t_dollar_word *s)
 {
