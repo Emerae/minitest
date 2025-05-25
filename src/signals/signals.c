@@ -1,7 +1,5 @@
 #include "../../includes/minishell.h"
 
-volatile sig_atomic_t	g_signal_received = 0;
-
 /*
 ** Signal handler for SIGINT (Ctrl-C)
 ** In interactive mode: displays a new prompt on a new line

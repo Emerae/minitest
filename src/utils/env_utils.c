@@ -83,6 +83,32 @@ char	*get_env_value(char **env, char *key)
 }
 
 /*
+** Reallocate environment array with new size
+*/
+char	**realloc_env(char **env, int new_size)
+{
+	char	**new_env;
+	int		i;
+
+	new_env = malloc(sizeof(char *) * (new_size + 1));
+	if (!new_env)
+		return (NULL);
+	i = 0;
+	while (env[i] && i < new_size)
+	{
+		new_env[i] = env[i];
+		i++;
+	}
+	while (i <= new_size)
+	{
+		new_env[i] = NULL;
+		i++;
+	}
+	free(env);
+	return (new_env);
+}
+
+/*
 ** Find index of environment variable
 ** Returns index or -1 if not found
 */
@@ -175,28 +201,4 @@ int	unset_env_value(char ***env, char *key)
 	return (0);
 }
 
-/*
-** Reallocate environment array with new size
-*/
-static char	**realloc_env(char **env, int new_size)
-{
-	char	**new_env;
-	int		i;
 
-	new_env = malloc(sizeof(char *) * (new_size + 1));
-	if (!new_env)
-		return (NULL);
-	i = 0;
-	while (env[i] && i < new_size)
-	{
-		new_env[i] = env[i];
-		i++;
-	}
-	while (i <= new_size)
-	{
-		new_env[i] = NULL;
-		i++;
-	}
-	free(env);
-	return (new_env);
-}

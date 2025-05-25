@@ -45,7 +45,7 @@ int	handle_heredoc(char *delimiter)
 {
 	int		pipe_fd[2];
 	char	*line;
-	size_t	delim_len;
+	//size_t	delim_len;
 
 	DEBUG_REDIR_MSG("Starting heredoc with delimiter '%s'", delimiter);
 	
@@ -54,7 +54,7 @@ int	handle_heredoc(char *delimiter)
 		DEBUG_ERROR("Failed to create pipe for heredoc");
 		return (-1);
 	}
-	delim_len = ft_strlen(delimiter);
+	//delim_len = ft_strlen(delimiter);
 	setup_heredoc_signals();
 	while (1)
 	{

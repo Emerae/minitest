@@ -14,14 +14,14 @@
 # endif
 
 /* Debug levels */
-# define DEBUG_NONE		0
-# define DEBUG_ERROR	1
-# define DEBUG_INFO		2
-# define DEBUG_TRACE	3
+# define DEBUG_NONE_LEVEL	0
+# define DEBUG_ERROR_LEVEL	1
+# define DEBUG_INFO_LEVEL	2
+# define DEBUG_TRACE_LEVEL	3
 
 /* Current debug level */
 # ifndef DEBUG_LEVEL
-#  define DEBUG_LEVEL	DEBUG_INFO
+#  define DEBUG_LEVEL	DEBUG_INFO_LEVEL
 # endif
 
 /* Module-specific debug flags */
@@ -82,7 +82,7 @@
 /* Print to stderr with module prefix */
 # define DEBUG_PRINT(module, color, fmt, ...) \
 	do { \
-		if (DEBUG && DEBUG_##module && DEBUG_LEVEL >= DEBUG_INFO) { \
+		if (DEBUG && DEBUG_##module && DEBUG_LEVEL >= DEBUG_INFO_LEVEL) { \
 			dprintf(STDERR_FILENO, color "[" #module "] " fmt COLOR_RESET "\n", \
 				##__VA_ARGS__); \
 		} \
@@ -119,7 +119,7 @@
 /* Error messages (always shown if DEBUG is on) */
 # define DEBUG_ERROR(fmt, ...) \
 	do { \
-		if (DEBUG && DEBUG_LEVEL >= DEBUG_ERROR) { \
+		if (DEBUG && DEBUG_LEVEL >= DEBUG_ERROR_LEVEL) { \
 			dprintf(STDERR_FILENO, COLOR_RED "[ERROR] " fmt COLOR_RESET "\n", \
 				##__VA_ARGS__); \
 		} \
@@ -128,7 +128,7 @@
 /* Trace messages (only shown at highest debug level) */
 # define DEBUG_TRACE(fmt, ...) \
 	do { \
-		if (DEBUG && DEBUG_LEVEL >= DEBUG_TRACE) { \
+		if (DEBUG && DEBUG_LEVEL >= DEBUG_TRACE_LEVEL) { \
 			dprintf(STDERR_FILENO, COLOR_GRAY "[TRACE] %s:%d: " fmt COLOR_RESET "\n", \
 				__FILE__, __LINE__, ##__VA_ARGS__); \
 		} \
@@ -144,8 +144,7 @@ static inline void	debug_print_cmd(t_cmd *cmd)
 	int		i;
 	t_redir	*redir;
 
-	if (!DEBUG || !DEBUG_EXEC || DEBUG_LEVEL < DEBUG_INFO)
-		return ;
+	if (!DEBUG || !DEBUG_EXEC || DEBUG_LEVEL < DEBUG_INFO_LEVEL)		return ;
 	dprintf(STDERR_FILENO, COLOR_GREEN "[EXEC] Command: " COLOR_RESET);
 	if (cmd->args)
 	{
@@ -174,7 +173,7 @@ static inline void	debug_print_cmd(t_cmd *cmd)
 /* Print environment variable */
 static inline void	debug_print_env_var(const char *key, const char *value)
 {
-	if (!DEBUG || !DEBUG_ENV || DEBUG_LEVEL < DEBUG_INFO)
+	if (!DEBUG || !DEBUG_ENV || DEBUG_LEVEL < DEBUG_INFO_LEVEL)
 		return ;
 	if (value)
 		dprintf(STDERR_FILENO, COLOR_GRAY "[ENV] %s=%s\n" COLOR_RESET, key, value);
@@ -185,7 +184,7 @@ static inline void	debug_print_env_var(const char *key, const char *value)
 /* Print pipe state */
 static inline void	debug_print_pipe_state(int prev_pipe, int pipe_fd[2])
 {
-	if (!DEBUG || !DEBUG_PIPE || DEBUG_LEVEL < DEBUG_INFO)
+	if (!DEBUG || !DEBUG_PIPE || DEBUG_LEVEL < DEBUG_INFO_LEVEL)
 		return ;
 	if (pipe_fd)
 		dprintf(STDERR_FILENO, COLOR_CYAN "[PIPE] prev_pipe=%d, pipe[0]=%d, pipe[1]=%d\n"
