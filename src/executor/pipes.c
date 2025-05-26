@@ -21,12 +21,10 @@ int	create_pipe(int pipe_fd[2])
 */
 void	setup_pipe_child(int pipe_fd[2], int prev_pipe, int is_last)
 {
-	DEBUG_PIPE_MSG("Setting up pipes for child process");
 	debug_print_pipe_state(prev_pipe, pipe_fd);
 	
 	if (prev_pipe != -1)
 	{
-		DEBUG_PIPE_MSG("Redirecting stdin from prev_pipe %d", prev_pipe);
 		dup2(prev_pipe, STDIN_FILENO);
 		close(prev_pipe);
 	}
@@ -151,7 +149,6 @@ static int	preprocess_heredocs(t_cmd *cmd_list)
 					{
 						if (g_signal_received == SIGINT)
 						{
-							printf("DEBUG: SIGINT detected, cleaning up\n");  // Debug temporaire
 							g_signal_received = 0;
 							close(temp_fd);
 							unlink(temp_filename);

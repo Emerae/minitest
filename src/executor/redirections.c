@@ -10,8 +10,6 @@
 int	open_file_for_redirect(char *filename, int type)
 {
 	int	fd;
-	
-	DEBUG_REDIR_MSG("Opening file '%s' for redirection type %d", filename, type);
 
 	if (type == 0)
 		fd = open(filename, O_RDONLY);
@@ -20,20 +18,14 @@ int	open_file_for_redirect(char *filename, int type)
 	else if (type == 2)
 		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
-	{
-		DEBUG_ERROR("Invalid redirection type: %d", type);
 		return (-1);
-	}
 	if (fd == -1)
 	{
-		DEBUG_ERROR("Failed to open file '%s': %s", filename, strerror(errno));
 		write(STDERR_FILENO, "minishell: ", 11);
 		write(STDERR_FILENO, filename, ft_strlen(filename));
 		write(STDERR_FILENO, ": ", 2);
 		perror("");
 	}
-	else
-		DEBUG_REDIR_MSG("File '%s' opened successfully with fd %d", filename, fd);
 	return (fd);
 }
 
@@ -42,42 +34,27 @@ int	handle_heredoc(char *delimiter)
 {
 	int		pipe_fd[2];
 	char	*line;
-	//size_t	delim_len;
-
-	DEBUG_REDIR_MSG("Starting heredoc with delimiter '%s'", delimiter);
 	
 	if (pipe(pipe_fd) == -1)
-	{
-		DEBUG_ERROR("Failed to create pipe for heredoc");
 		return (-1);
-	}
-	//delim_len = ft_strlen(delimiter);
 	setup_heredoc_signals();
 	while (1)
 	{
-		write(STDERR_FILENO, "DEBUG handle_heredoc: About to readline\n", 40);
 		line = readline("> ");
-		write(STDERR_FILENO, "DEBUG handle_heredoc: readline returned\n", 40);
-		
 		if (!line || g_signal_received == SIGINT)
 		{
-			write(STDERR_FILENO, "DEBUG handle_heredoc: cleanup condition\n", 40);
 			if (g_signal_received == SIGINT)
 			{
-				DEBUG_SIGNAL_MSG("Heredoc interrupted by SIGINT");
 				g_signal_received = 0;  // Nettoyer ici
 				close(pipe_fd[1]);
 				close(pipe_fd[0]);
 				setup_signals();
 				return (-1);
 			}
-			else
-				DEBUG_REDIR_MSG("Heredoc EOF reached");
 			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)
 		{
-			DEBUG_REDIR_MSG("Heredoc delimiter found");
 			free(line);
 			break ;
 		}
@@ -87,7 +64,6 @@ int	handle_heredoc(char *delimiter)
 	}
 	close(pipe_fd[1]);
 	setup_signals();
-	DEBUG_REDIR_MSG("Heredoc completed, returning read fd %d", pipe_fd[0]);
 	return (pipe_fd[0]);
 }
 
@@ -149,9 +125,6 @@ static int	apply_redirection(t_redir *redir)
 	int	fd;
 	int	target_fd;
 
-	DEBUG_REDIR_MSG("Applying redirection: type=%d, file='%s'", 
-		redir->type, redir->file);
-
 	if (redir->type == 3)
 		fd = handle_heredoc(redir->file);
 	else
@@ -163,12 +136,8 @@ static int	apply_redirection(t_redir *redir)
 		target_fd = STDIN_FILENO;
 	else
 		target_fd = STDOUT_FILENO;
-		
-	DEBUG_REDIR_MSG("Redirecting fd %d to fd %d", fd, target_fd);
-	
 	if (dup2(fd, target_fd) == -1)
 	{
-		DEBUG_ERROR("dup2 failed: %s", strerror(errno));
 		close(fd);
 		return (-1);
 	}

@@ -148,24 +148,17 @@ int	cy3_handle_dollar_word_2b(t_input *current, t_dollar_word *s)
 */
 int	cy3_handle_dollar_word_2(t_input *current, t_dollar_word *s)
 {
-	printf("DEBUG: Entering cy3_handle_dollar_word_2, s->i=%d, s->j=%d\n", s->i, s->j);
 	s->vlen = cy_strlen(s->value);
-	printf("DEBUG: s->vlen=%d, s->value='%s'\n", s->vlen, s->value);
 	s->lold = cy_strlen(current->input);
-	printf("DEBUG: s->lold=%d\n", s->lold);
 	s->new_input = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
 	s->new_type = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
 	s->new_num = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
-	printf("DEBUG: malloc done, checking pointers\n");
 	if (!s->new_input || !s->new_type || !s->new_num)
 		return (-1);
 	s->p = 0;
 	cy3_handle_dollar_word_2_before(current, s);
-	printf("DEBUG: About to call cy3_handle_dollar_word_2a\n");
 	cy3_handle_dollar_word_2a(current, s);
-	printf("DEBUG: 2a done, calling 2b\n");
 	cy3_handle_dollar_word_2b(current, s);
-	printf("DEBUG: 2b done\n");
 	s->new_input[s->p] = '\0';
 	s->new_type[s->p] = '\0';
 	s->new_num[s->p] = '\0';

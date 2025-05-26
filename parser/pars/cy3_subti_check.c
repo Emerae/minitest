@@ -54,7 +54,7 @@ int	cy3_substi_check(t_input **head_input, char **env)
 		cy0_free_input_list(*head_input);
 		return (1);
 	}
-	print_input_list(*head_input);
+	//print_input_list(*head_input);
 	ret = cy3_fuse_nospace(*head_input);
 	if (ret)
 	{

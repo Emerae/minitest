@@ -170,18 +170,14 @@ int	execute_simple_command(t_cmd *cmd, t_shell *shell)
 */
 int	execute_command_line(t_cmd *cmd_list, t_shell *shell)
 {
-	DEBUG_EXEC_MSG("Starting command execution");
 	
 	if (!cmd_list)
 		return (0);
 	
 	if (!cmd_list->next)
 	{
-		DEBUG_EXEC_MSG("Single command detected");
 		debug_print_cmd(cmd_list);
 		return (execute_simple_command(cmd_list, shell));
 	}
-	
-	DEBUG_EXEC_MSG("Pipeline detected");
 	return (execute_pipeline(cmd_list, shell));
 }

@@ -26,10 +26,6 @@ int	builtin_cd(char **args, char ***env)
 	char	old_pwd[4096];
 
 	if (!args[1])
-		DEBUG_BUILTIN_MSG("CD: no argument, using HOME");
-	else
-		DEBUG_BUILTIN_MSG("CD: changing to '%s'", args[1]);
-	if (!args[1])
 	{
 		home = get_env_value(*env, "HOME");
 		if (!home)

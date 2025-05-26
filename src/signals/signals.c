@@ -6,7 +6,6 @@
 */
 void	handle_sigint(int sig)
 {
-	DEBUG_SIGNAL_MSG("Received SIGINT (signal %d)", sig);
 	g_signal_received = sig;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
@@ -20,7 +19,6 @@ void	handle_sigint(int sig)
 */
 void	handle_sigquit(int sig)
 {
-	DEBUG_SIGNAL_MSG("Received SIGQUIT (signal %d) - ignoring", sig);
 	(void)sig;
 }
 
@@ -34,7 +32,6 @@ void	setup_signals(void)
 	struct sigaction	sa_int;
 	struct sigaction	sa_quit;
 
-	DEBUG_SIGNAL_MSG("Setting up signal handlers for interactive mode");
 	g_signal_received = 0;
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_handler = handle_sigint;
@@ -54,7 +51,6 @@ void	setup_child_signals(void)
 {
 	struct sigaction	sa;
 
-	DEBUG_SIGNAL_MSG("Resetting signal handlers for child process");
 	sigemptyset(&sa.sa_mask);
 	sa.sa_handler = SIG_DFL;
 	sa.sa_flags = 0;

@@ -60,8 +60,6 @@ char	*get_env_value(char **env, char *key)
 	int		i;
 	int		key_len;
 	char	*equal_sign;
-
-	DEBUG_ENV_MSG("Getting value for key '%s'", key);
 	
 	if (!env || !key)
 		return (NULL);
@@ -73,12 +71,10 @@ char	*get_env_value(char **env, char *key)
 		if (equal_sign && (equal_sign - env[i]) == key_len
 			&& ft_strncmp(env[i], key, key_len) == 0)
 		{
-			DEBUG_ENV_MSG("Found: %s=%s", key, equal_sign + 1);
 			return (equal_sign + 1);
 		}
 		i++;
 	}
-	DEBUG_ENV_MSG("Key '%s' not found", key);
 	return (NULL);
 }
 
@@ -144,10 +140,6 @@ int	set_env_value(char ***env, char *key, char *value)
 	int		index;
 	int		count;
 
-	if (value)
-		DEBUG_ENV_MSG("Setting %s=%s", key, value);
-	else
-		DEBUG_ENV_MSG("Setting %s=(empty)", key);
 	if (!env || !*env || !key)
 		return (1);
 	new_entry = malloc(ft_strlen(key) + ft_strlen(value) + 2);

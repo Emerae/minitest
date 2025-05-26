@@ -67,7 +67,6 @@ int	cy3_scan_dollar_syntax_2_1(t_input *current, int i, char **env)
 
 	j = i + 1;
 	j = cy3_scan_dollar_syntax_2_1_1(current, i, j);
-	printf("DEBUG i = %d j = %d\n", i, j);
 	i = cy3_handle_dollar_word(current, i, j - 1, env);
 	if (i == -1)
 		return (1);

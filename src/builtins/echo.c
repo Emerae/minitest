@@ -9,12 +9,10 @@ int	builtin_echo(char **args)
 	int	i;
 	int	newline;
 
-	DEBUG_BUILTIN_MSG("ECHO: starting");
 	i = 1;
 	newline = 1;
 	if (args[1] && ft_strcmp(args[1], "-n") == 0)
 	{
-		DEBUG_BUILTIN_MSG("ECHO: -n flag detected");
 		newline = 0;
 		i = 2;
 	}

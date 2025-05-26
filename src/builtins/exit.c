@@ -29,12 +29,9 @@ int	builtin_exit(char **args, t_shell *shell)
 {
 	int	exit_code;
 
-	DEBUG_BUILTIN_MSG("EXIT: called");
 	write(STDERR_FILENO, "exit\n", 5);
 	if (!args[1])
 	{
-		DEBUG_BUILTIN_MSG("EXIT: no argument, using last status %d", 
-			shell->last_exit_status);
 		cleanup_shell(shell);
 		exit(shell->last_exit_status);
 	}

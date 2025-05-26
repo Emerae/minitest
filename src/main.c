@@ -34,31 +34,23 @@ static void	process_line(char *line, t_shell *shell)
 {
 	t_input	*head_input;
 	t_cmd	*head_cmd;
-
-	DEBUG_MAIN_MSG("Processing line: '%s'", line);
 	
 	head_input = cy1_make_list(line);
 	if (!head_input)
-	{
-		DEBUG_ERROR("Failed to create input list");
 		return ;
-	}
 	if (head_input->type == 1 && !head_input->next)
 	{
-		DEBUG_MAIN_MSG("Empty command (just spaces)");
 		cy0_free_input_list(head_input);
 		return ;
 	}
 	if (cy3_substi_check(&head_input, shell->env))
 	{
-		DEBUG_ERROR("Substitution check failed");
 		cy0_free_input_list(head_input);
 		shell->last_exit_status = 1;
 		return ;
 	}
 	if (cy3_scan_dollar_syntax(head_input, shell->env, shell->last_exit_status))
 	{
-		DEBUG_ERROR("Dollar syntax scan failed");
 		cy0_free_input_list(head_input);
 		shell->last_exit_status = 1;
 		return ;
@@ -68,7 +60,6 @@ static void	process_line(char *line, t_shell *shell)
 		|| cy4_3wrong_pipe(head_input) || cy4_4wrong_redir_log(head_input)
 		|| cy4_5wrong_pipe_log(head_input))
 	{
-		DEBUG_ERROR("Syntax error detected");
 		write(STDERR_FILENO, "minishell: syntax error\n", 24);
 		cy0_free_input_list(head_input);
 		shell->last_exit_status = ERROR_SYNTAX;
@@ -78,13 +69,10 @@ static void	process_line(char *line, t_shell *shell)
 	cy0_free_input_list(head_input);
 	if (!head_cmd)
 	{
-		DEBUG_ERROR("Failed to convert to command structure");
 		shell->last_exit_status = 1;
 		return ;
 	}
-	DEBUG_MAIN_MSG("Executing command line");
 	shell->last_exit_status = execute_command_line(head_cmd, shell);
-	DEBUG_MAIN_MSG("Command returned with status: %d", shell->last_exit_status);
 	cy0_free_cmd_list(head_cmd);
 }
 
@@ -99,7 +87,6 @@ void	shell_loop(t_shell *shell)
 	{
 		if (g_signal_received == SIGINT)
 		{
-			write(STDERR_FILENO, "DEBUG shell_loop: SIGINT detected\n", 34);
 			shell->last_exit_status = 130;
 			g_signal_received = 0;
 		}
