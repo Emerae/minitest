@@ -151,6 +151,7 @@ static int	preprocess_heredocs(t_cmd *cmd_list)
 					{
 						if (g_signal_received == SIGINT)
 						{
+							printf("DEBUG: SIGINT detected, cleaning up\n");  // Debug temporaire
 							g_signal_received = 0;
 							close(temp_fd);
 							unlink(temp_filename);
@@ -180,6 +181,7 @@ static int	preprocess_heredocs(t_cmd *cmd_list)
 	}
 	return (0);
 }
+
 
 int	execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 {

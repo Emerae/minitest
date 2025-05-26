@@ -99,6 +99,7 @@ void	shell_loop(t_shell *shell)
 	{
 		if (g_signal_received == SIGINT)
 		{
+			write(STDERR_FILENO, "DEBUG shell_loop: SIGINT detected\n", 34);
 			shell->last_exit_status = 130;
 			g_signal_received = 0;
 		}
@@ -112,6 +113,7 @@ void	shell_loop(t_shell *shell)
 		{
 			add_history(line);
 			process_line(line, shell);
+			//g_signal_received = 0;
 		}
 		free(line);
 	}

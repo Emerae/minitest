@@ -86,6 +86,49 @@ static int	execute_external_command(t_cmd *cmd, t_shell *shell)
 }
 
 /*
+** Check if builtin must run in parent (modifies shell state)
+*/
+static int	must_run_in_parent(char *cmd)
+{
+	if (ft_strcmp(cmd, "export") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "unset") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "cd") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "exit") == 0)
+		return (1);
+	return (0);
+}
+
+/*
+** Execute builtin with redirections in parent process
+*/
+static int	execute_builtin_with_redirs(t_cmd *cmd, t_shell *shell)
+{
+	int	saved_stdout;
+	int	saved_stdin;
+	int	ret;
+
+	saved_stdout = dup(STDOUT_FILENO);
+	saved_stdin = dup(STDIN_FILENO);
+	if (saved_stdout == -1 || saved_stdin == -1)
+		return (1);
+	if (setup_redirections(cmd->redirs) == -1)
+	{
+		close(saved_stdout);
+		close(saved_stdin);
+		return (1);
+	}
+	ret = execute_builtin(cmd, shell);
+	dup2(saved_stdout, STDOUT_FILENO);
+	dup2(saved_stdin, STDIN_FILENO);
+	close(saved_stdout);
+	close(saved_stdin);
+	return (ret);
+}
+
+/*
 ** Execute a simple command (no pipes)
 */
 int	execute_simple_command(t_cmd *cmd, t_shell *shell)
@@ -94,17 +137,33 @@ int	execute_simple_command(t_cmd *cmd, t_shell *shell)
 		return (0);
 	if (is_builtin(cmd->args[0]))
 	{
+		if (cmd->redirs && must_run_in_parent(cmd->args[0]))
+			return (execute_builtin_with_redirs(cmd, shell));
 		if (cmd->redirs)
-		{
-			/* Builtin avec redirections : exécuter dans un processus enfant
-			 * pour ne pas affecter le shell parent */
 			return (execute_external_command(cmd, shell));
-		}
-		/* Builtin sans redirection : exécuter directement */
 		return (execute_builtin(cmd, shell));
 	}
 	return (execute_external_command(cmd, shell));
 }
+
+/*
+** Execute a simple command (no pipes)
+
+int	execute_simple_command(t_cmd *cmd, t_shell *shell)
+{
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (0);
+	if (is_builtin(cmd->args[0]))
+	{
+		if (cmd->redirs)
+		{
+			return (execute_external_command(cmd, shell));
+		}
+		return (execute_builtin(cmd, shell));
+	}
+	return (execute_external_command(cmd, shell));
+}
+*/
 
 /*
 ** Main execution function - dispatch based on command type

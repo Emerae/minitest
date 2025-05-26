@@ -37,10 +37,64 @@ int	open_file_for_redirect(char *filename, int type)
 	return (fd);
 }
 
+
+int	handle_heredoc(char *delimiter)
+{
+	int		pipe_fd[2];
+	char	*line;
+	//size_t	delim_len;
+
+	DEBUG_REDIR_MSG("Starting heredoc with delimiter '%s'", delimiter);
+	
+	if (pipe(pipe_fd) == -1)
+	{
+		DEBUG_ERROR("Failed to create pipe for heredoc");
+		return (-1);
+	}
+	//delim_len = ft_strlen(delimiter);
+	setup_heredoc_signals();
+	while (1)
+	{
+		write(STDERR_FILENO, "DEBUG handle_heredoc: About to readline\n", 40);
+		line = readline("> ");
+		write(STDERR_FILENO, "DEBUG handle_heredoc: readline returned\n", 40);
+		
+		if (!line || g_signal_received == SIGINT)
+		{
+			write(STDERR_FILENO, "DEBUG handle_heredoc: cleanup condition\n", 40);
+			if (g_signal_received == SIGINT)
+			{
+				DEBUG_SIGNAL_MSG("Heredoc interrupted by SIGINT");
+				g_signal_received = 0;  // Nettoyer ici
+				close(pipe_fd[1]);
+				close(pipe_fd[0]);
+				setup_signals();
+				return (-1);
+			}
+			else
+				DEBUG_REDIR_MSG("Heredoc EOF reached");
+			break ;
+		}
+		if (ft_strcmp(line, delimiter) == 0)
+		{
+			DEBUG_REDIR_MSG("Heredoc delimiter found");
+			free(line);
+			break ;
+		}
+		write(pipe_fd[1], line, ft_strlen(line));
+		write(pipe_fd[1], "\n", 1);
+		free(line);
+	}
+	close(pipe_fd[1]);
+	setup_signals();
+	DEBUG_REDIR_MSG("Heredoc completed, returning read fd %d", pipe_fd[0]);
+	return (pipe_fd[0]);
+}
+
 /*
 ** Handle heredoc redirection
 ** Read input until delimiter is found
-*/
+
 int	handle_heredoc(char *delimiter)
 {
 	int		pipe_fd[2];
@@ -85,6 +139,7 @@ int	handle_heredoc(char *delimiter)
 	DEBUG_REDIR_MSG("Heredoc completed, returning read fd %d", pipe_fd[0]);
 	return (pipe_fd[0]);
 }
+*/
 
 /*
 ** Apply a single redirection
