@@ -174,19 +174,19 @@ void	cy2_free_first_cmd_node(t_cmd **head);
 
 int		cy3_substi_check(t_input **head_input, char **env);
 int		cy3_fuse_nospace(t_input *head);
-int		cy3_scan_dollar_syntax(t_input *head, char **env);
+int		cy3_scan_dollar_syntax(t_input *head, char **env, int exit_code);
 int		cy3_scan_dollar_syntax_1_1_1(t_input *current, int i);
 int		cy3_scan_dollar_syntax_1_1_2(t_input *current, int i, int j);
 int		cy3_scan_dollar_syntax_1_1(t_input *current, int i, char **env);
 int		cy3_scan_dollar_syntax_2_1_1(t_input *current, int i, int j);
 int		cy3_scan_dollar_syntax_2_1(t_input *current, int i, char **env);
-int		cy3_scan_dollar_syntax_2(t_input *current, int i, char **env);
+int		cy3_scan_dollar_syntax_2(t_input *current, int i, char **env, int exit_code);
 int		cy3_scan_dollar_syntax_dollar_1(t_input *current,
-			int *i, char **env);
+			int *i, char **env, int exit_code);
 int		cy3_scan_dollar_syntax_dollar_2(t_input *current,
-			int *i, char **env);
+			int *i, char **env, int exit_code);
 int		cy3_scan_dollar_syntax_dollar(t_input *current,
-			int *i, char **env);
+			int *i, char **env, int exit_code);
 int		cy3_handle_dollar_brace(t_input *current, int i, int j, char **env);
 int		cy3_handle_dollar_brace1(t_input *current,
 			int i, int j, t_dollar_braces *s);
@@ -217,7 +217,7 @@ int		cy3_handle_dollar_word_3(t_input *current, int i, int j);
 int		cy3_handle_dollar_word_3a(t_input *current, int i, t_dollar_word *s);
 int		cy3_handle_dollar_word_3b(t_input *current, int j, t_dollar_word *s);
 int		cy3_handle_dollar_alone(t_input *current, int i);
-int		cy3_handle_dollar_bang(t_input *current, int i, int j, char **env);
+int		cy3_handle_dollar_bang(t_input *current, int i, int j, char **env, int exit_code);
 
 int		cy4_1wrong_char(t_input *head);
 int		cy4_2wrong_redir(t_input *head);

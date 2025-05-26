@@ -56,7 +56,7 @@ static void	process_line(char *line, t_shell *shell)
 		shell->last_exit_status = 1;
 		return ;
 	}
-	if (cy3_scan_dollar_syntax(head_input, shell->env))
+	if (cy3_scan_dollar_syntax(head_input, shell->env, shell->last_exit_status))
 	{
 		DEBUG_ERROR("Dollar syntax scan failed");
 		cy0_free_input_list(head_input);

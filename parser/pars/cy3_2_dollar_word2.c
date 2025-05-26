@@ -73,6 +73,32 @@ void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)
 }
 */
 
+/*
+** CORRECTION CRITIQUE - Copie manquante de la partie avant la variable
+**
+** Problème : cy3_handle_dollar_word_2 ne copie que la valeur de la variable
+** et ce qui vient après, mais JAMAIS ce qui vient avant.
+**
+** Exemple : "User: '$USER' Home: $HOME"
+** - Pour $HOME, on doit copier "User: 'rlaigle' Home: " + "/home/rlaigle"
+** - Actuellement : on copie seulement "/home/rlaigle"
+**
+** Solution : Ajouter la copie de current->input[0..s->i-1] avant la variable
+*/
+static int	cy3_handle_dollar_word_2_before(t_input *current, t_dollar_word *s)
+{
+	s->k = 0;
+	while (s->k < s->i)
+	{
+		s->new_input[s->p] = current->input[s->k];
+		s->new_type[s->p] = current->input_type[s->k];
+		s->new_num[s->p] = current->input_num[s->k];
+		s->p = s->p + 1;
+		s->k = s->k + 1;
+	}
+	return (0);
+}
+
 int	cy3_handle_dollar_word_2a(t_input *current, t_dollar_word *s)
 {
 	s->k = 0;
@@ -101,6 +127,89 @@ int	cy3_handle_dollar_word_2b(t_input *current, t_dollar_word *s)
 	return (0);
 }
 
+
+/*
+** CORRECTION CRITIQUE - Initialisation manquante de s->p
+**
+** Problème : Valgrind révèle "Use of uninitialised value" dans cy3_handle_dollar_word_2a
+** car s->p n'est jamais initialisé avant utilisation.
+**
+** Symptôme concret :
+** - s->p contient une valeur garbage (ex: 0x6b877c10) 
+** - cy3_handle_dollar_word_2a fait : s->new_input[s->p] = s->value[s->k]
+** - Accès mémoire à une adresse invalide -> Segfault
+**
+** Exemple : Pour "Hello $HOME World"
+** - s->p devrait être 0 pour commencer à écrire au début de new_input
+** - Sans initialisation, s->p = garbage -> crash immédiat
+**
+** Solution : Initialiser s->p = 0 avant toute utilisation pour que
+** l'écriture commence correctement au début du buffer alloué.
+*/
+int	cy3_handle_dollar_word_2(t_input *current, t_dollar_word *s)
+{
+	printf("DEBUG: Entering cy3_handle_dollar_word_2, s->i=%d, s->j=%d\n", s->i, s->j);
+	s->vlen = cy_strlen(s->value);
+	printf("DEBUG: s->vlen=%d, s->value='%s'\n", s->vlen, s->value);
+	s->lold = cy_strlen(current->input);
+	printf("DEBUG: s->lold=%d\n", s->lold);
+	s->new_input = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
+	s->new_type = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
+	s->new_num = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
+	printf("DEBUG: malloc done, checking pointers\n");
+	if (!s->new_input || !s->new_type || !s->new_num)
+		return (-1);
+	s->p = 0;
+	cy3_handle_dollar_word_2_before(current, s);
+	printf("DEBUG: About to call cy3_handle_dollar_word_2a\n");
+	cy3_handle_dollar_word_2a(current, s);
+	printf("DEBUG: 2a done, calling 2b\n");
+	cy3_handle_dollar_word_2b(current, s);
+	printf("DEBUG: 2b done\n");
+	s->new_input[s->p] = '\0';
+	s->new_type[s->p] = '\0';
+	s->new_num[s->p] = '\0';
+	free(current->input);
+	free(current->input_type);
+	free(current->input_num);
+	current->input = s->new_input;
+	current->input_type = s->new_type;
+	current->input_num = s->new_num;
+	return (s->i + s->vlen - 1);
+}
+
+/*
+int	cy3_handle_dollar_word_2(t_input *current, t_dollar_word *s)
+{
+	printf("DEBUG: Entering cy3_handle_dollar_word_2, s->i=%d, s->j=%d\n", s->i, s->j);
+	s->vlen = cy_strlen(s->value);
+	printf("DEBUG: s->vlen=%d, s->value='%s'\n", s->vlen, s->value);
+	s->lold = cy_strlen(current->input);
+	printf("DEBUG: s->lold=%d\n", s->lold);
+	s->new_input = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
+	s->new_type = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
+	s->new_num = malloc(s->lold - (s->j - s->i + 1) + s->vlen + 1);
+	printf("DEBUG: malloc done, checking pointers\n");
+	if (!s->new_input || !s->new_type || !s->new_num)
+		return (-1);
+	printf("DEBUG: About to call cy3_handle_dollar_word_2a\n");
+	cy3_handle_dollar_word_2a(current, s);
+	printf("DEBUG: 2a done, calling 2b\n");
+	cy3_handle_dollar_word_2b(current, s);
+	printf("DEBUG: 2b done\n");
+	s->new_input[s->p] = '\0';
+	s->new_type[s->p] = '\0';
+	s->new_num[s->p] = '\0';
+	free(current->input);
+	free(current->input_type);
+	free(current->input_num);
+	current->input = s->new_input;
+	current->input_type = s->new_type;
+	current->input_num = s->new_num;
+	return (s->i + s->vlen - 1);
+}
+
+
 int	cy3_handle_dollar_word_2(t_input *current, t_dollar_word *s)
 {
 	s->vlen = cy_strlen(s->value);
@@ -123,3 +232,4 @@ int	cy3_handle_dollar_word_2(t_input *current, t_dollar_word *s)
 	current->input_num = s->new_num;
 	return (s->i + s->vlen - 1);
 }
+*/

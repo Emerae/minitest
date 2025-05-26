@@ -53,6 +53,36 @@ int	cy3_handle_dollar_word_3(t_input *current, int i, int j)
 	return (i);
 }
 
+
+/*
+** CORRECTION CRITIQUE - Suppression du code dupliqué dangereux
+**
+** Problème : cy3_handle_dollar_word_1 essayait de copier des données dans
+** s->new_input AVANT que la mémoire soit allouée ! 
+** 
+** Valgrind montre : "Invalid write at address 0x0" car s->new_input = NULL
+**
+** Solution : Supprimer ce code dupliqué et laisser cy3_handle_dollar_word_2
+** s'occuper de TOUTE l'allocation et l'assemblage de la chaîne.
+*/
+int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
+{
+	char	*equal;
+
+	if (env[s->e])
+	{
+		equal = cy_strchr(env[s->e], '=');
+		if (equal && (int)(equal - env[s->e]) == s->keylen &&
+			cy_strncmp(env[s->e], s->key, s->keylen) == 0)
+		{
+			s->value = equal + 1;
+			/* Supprimer tout le code de copie - cy3_handle_dollar_word_2 s'en occupe */
+			return (cy3_handle_dollar_word_2(current, s));
+		}
+	}
+	return (cy3_handle_dollar_word_3(current, s->i, s->j));
+}
+
 /*
 ** CORRECTION CRITIQUE - Bug de vérification de variable trouvée
 **
@@ -69,6 +99,7 @@ int	cy3_handle_dollar_word_3(t_input *current, int i, int j)
 **
 ** Solution : Vérifier si env[s->e] existe ET contient bien notre variable
 */
+/*
 int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
 {
 	char	*equal;
@@ -95,6 +126,7 @@ int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
 	}
 	return (cy3_handle_dollar_word_3(current, s->i, s->j));
 }
+*/
 
 /*
 int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
@@ -118,6 +150,7 @@ int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
 }
 */
 
+
 int	cy3_handle_dollar_word(t_input *current, int i, int j, char **env)
 {
 	t_dollar_word	s;
@@ -128,3 +161,4 @@ int	cy3_handle_dollar_word(t_input *current, int i, int j, char **env)
 	cy3_handle_dollar_word_findenv(&s, env);
 	return (cy3_handle_dollar_word_1(current, env, &s));
 }
+
