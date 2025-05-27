@@ -57,8 +57,7 @@ UTILS_SRC	= $(UTILS_DIR)/utils.c \
 			  $(UTILS_DIR)/env_utils.c \
 			  $(UTILS_DIR)/ft_split.c \
 			  $(UTILS_DIR)/ft_itoa.c \
-			  $(UTILS_DIR)/ft_atoi.c \
-			  src/parser_compat.c
+			  $(UTILS_DIR)/ft_atoi.c
 
 # All minishell sources
 SRCS		= $(MAIN_SRC) \

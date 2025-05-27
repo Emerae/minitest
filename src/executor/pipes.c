@@ -21,7 +21,7 @@ int	create_pipe(int pipe_fd[2])
 */
 void	setup_pipe_child(int pipe_fd[2], int prev_pipe, int is_last)
 {
-	debug_print_pipe_state(prev_pipe, pipe_fd);
+	//debug_print_pipe_state(prev_pipe, pipe_fd);
 	
 	if (prev_pipe != -1)
 	{

@@ -13,7 +13,6 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../parser/prser.h"
-# include "../includes/debug.h"
 
 /* ************************************************************************** */
 /*                                   MACROS                                   */

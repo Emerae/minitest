@@ -176,7 +176,7 @@ int	execute_command_line(t_cmd *cmd_list, t_shell *shell)
 	
 	if (!cmd_list->next)
 	{
-		debug_print_cmd(cmd_list);
+		//debug_print_cmd(cmd_list);
 		return (execute_simple_command(cmd_list, shell));
 	}
 	return (execute_pipeline(cmd_list, shell));
