@@ -1,5 +1,22 @@
 #include "../../includes/minishell.h"
 
+
+/*
+** Event hook called periodically by readline
+** Check for received signals
+*/
+int	check_signals_hook(void)
+{
+	if (g_signal_received == SIGINT)
+	{
+		//write(STDOUT_FILENO, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_done = 1;  /* Tell readline to return */
+	}
+	return (0);
+}
+
 /*
 ** Signal handler for SIGINT (Ctrl-C)
 ** In interactive mode: displays a new prompt on a new line
@@ -7,10 +24,9 @@
 void	handle_sigint(int sig)
 {
 	g_signal_received = sig;
+	
+	/* Envoyer SIGINT à tout le process group (y compris l'enfant) */
 	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	//rl_redisplay();
 }
 
 /*
@@ -22,11 +38,29 @@ void	handle_sigquit(int sig)
 	(void)sig;
 }
 
+
+void	setup_signals(void)
+{
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
+
+	g_signal_received = 0;
+	rl_event_hook = check_signals_hook;  /* Set the hook */
+	sigemptyset(&sa_int.sa_mask);
+	sa_int.sa_handler = handle_sigint;
+	sa_int.sa_flags = 0;
+	sigaction(SIGINT, &sa_int, NULL);
+	sigemptyset(&sa_quit.sa_mask);
+	sa_quit.sa_handler = SIG_IGN;
+	sa_quit.sa_flags = 0;
+	sigaction(SIGQUIT, &sa_quit, NULL);
+}
+
 /*
 ** Setup signal handlers for parent process (interactive mode)
 ** SIGINT: custom handler that displays new prompt
 ** SIGQUIT: ignored
-*/
+
 void	setup_signals(void)
 {
 	struct sigaction	sa_int;
@@ -42,6 +76,7 @@ void	setup_signals(void)
 	sa_quit.sa_flags = 0;
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
+*/
 
 /*
 ** Setup signal handlers for child process

@@ -40,6 +40,7 @@ typedef struct s_shell
 	int		last_exit_status;
 	int		in_pipe;
 	int		in_child;
+	pid_t	current_child_pid;  /* Ajoutez ça */
 }	t_shell;
 
 typedef struct s_exec
@@ -116,12 +117,14 @@ int		builtin_exit(char **args, t_shell *shell);
 /* ************************************************************************** */
 
 /* signals.c */
+void	handle_sigusr1(int sig);
 void	setup_signals(void);
 void	setup_child_signals(void);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 void	handle_sigint_heredoc(int sig);
 void	setup_heredoc_signals(void);
+int		check_signals_hook(void);
 
 /* signal_utils.c */
 void	setup_terminal(t_shell *shell);

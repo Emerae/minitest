@@ -16,6 +16,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->last_exit_status = 0;
 	shell->in_pipe = 0;
 	shell->in_child = 0;
+	shell->current_child_pid = 0;  /* Ajoutez ça */
 }
 
 /*
@@ -76,9 +77,71 @@ static void	process_line(char *line, t_shell *shell)
 	cy0_free_cmd_list(head_cmd);
 }
 
+void	shell_loop(t_shell *shell)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = readline(PROMPT);
+		
+		if (g_signal_received == SIGINT)
+		{
+			shell->last_exit_status = 130;
+			g_signal_received = 0;
+			
+			/* AJOUTEZ CES LIGNES ICI */
+			/* Si un processus enfant est en cours, le tuer */
+			if (shell->current_child_pid > 0)
+			{
+				kill(shell->current_child_pid, SIGINT);
+				//write(STDOUT_FILENO, "\n", 1);  /* Afficher le retour à la ligne */
+				shell->current_child_pid = 0;
+			}
+			/* FIN DES AJOUTS */
+			
+			if (line)
+				free(line);
+			continue;
+		}
+		
+		if (!line)
+		{
+			write(STDOUT_FILENO, "exit\n", 5);
+			break ;
+		}
+		if (*line)
+		{
+			add_history(line);
+			
+			/* Désactiver le hook pendant l'exécution */
+			rl_event_hook = NULL;
+			g_signal_received = 0;  /* Reset le flag */
+			
+			process_line(line, shell);
+			
+			/* Réactiver le hook après l'exécution */
+			rl_event_hook = check_signals_hook;
+			
+			/* Si signal reçu pendant l'exécution, mettre exit status */
+			if (g_signal_received == SIGINT)
+			{
+				shell->last_exit_status = 130;
+				g_signal_received = 0;
+				
+				/* AJOUTEZ CES LIGNES ICI AUSSI */
+				/* Afficher retour à la ligne si signal pendant exécution */
+				//write(STDOUT_FILENO, "\n", 1);
+				/* FIN DES AJOUTS */
+			}
+		}
+		free(line);
+	}
+}
+
 /*
 ** Main shell loop
-*/
+
 void	shell_loop(t_shell *shell)
 {
 	char	*line;
@@ -105,6 +168,7 @@ void	shell_loop(t_shell *shell)
 		free(line);
 	}
 }
+*/
 
 /*
 ** Main function

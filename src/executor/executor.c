@@ -46,9 +46,6 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 	return (0);
 }
 
-/*
-** Execute command in child process
-*/
 static void	execute_child_process(t_cmd *cmd, t_shell *shell)
 {
 	char	*cmd_path;
@@ -75,6 +72,18 @@ static void	execute_child_process(t_cmd *cmd, t_shell *shell)
 */
 static int	wait_child_process(pid_t pid)
 {
+	int	status = 0;
+
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (WEXITSTATUS(status));
+}
+
+/*
+** Wait for child process and get exit status
+static int	wait_child_process(pid_t pid)
+{
 	int	status;
 
 	waitpid(pid, &status, 0);
@@ -82,6 +91,7 @@ static int	wait_child_process(pid_t pid)
 		return (128 + WTERMSIG(status));
 	return (WEXITSTATUS(status));
 }
+*/
 
 /*
 ** Execute external command with fork and execve
@@ -98,7 +108,12 @@ static int	execute_external_command(t_cmd *cmd, t_shell *shell)
 	}
 	if (pid == 0)
 		execute_child_process(cmd, shell);
-	return (wait_child_process(pid));
+	
+	shell->current_child_pid = pid;  /* Stocker le PID */
+	int result = wait_child_process(pid);
+	shell->current_child_pid = 0;    /* Reset après wait */
+	
+	return (result);
 }
 
 /*
@@ -149,6 +164,7 @@ static int	execute_builtin_with_redirs(t_cmd *cmd, t_shell *shell)
 */
 int	execute_simple_command(t_cmd *cmd, t_shell *shell)
 {
+    write(STDERR_FILENO, "DEBUG: execute_simple_command\n", 30);
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (0);
 	if (is_builtin(cmd->args[0]))

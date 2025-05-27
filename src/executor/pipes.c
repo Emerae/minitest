@@ -232,6 +232,12 @@ int	execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	while (i < cmd_count)
 	{
 		waitpid(pids[i], &exec.status, 0);
+		
+		/* Si dernier processus tué par SIGINT, afficher retour à la ligne
+		if (i == cmd_count - 1 && WIFSIGNALED(exec.status) 
+			&& WTERMSIG(exec.status) == SIGINT)
+			write(STDOUT_FILENO, "\n", 1);
+		*/
 		i++;
 	}
 	free(pids);
