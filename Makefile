@@ -1,41 +1,17 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: user <user@student.42.fr>                  +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/01/01 00:00:00 by user              #+#    #+#              #
-#    Updated: 2024/01/01 00:00:00 by user             ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME		= minishell
-
-# **************************************************************************** #
-# COMPILATION
-# **************************************************************************** #
-
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -fsanitize=address -g
 INCLUDES	= -I./includes -I./parser
 LIBS		= -lreadline
 
-# **************************************************************************** #
-# SOURCES
-# **************************************************************************** #
-
-# Main source
 MAIN_SRC	= src/main.c
 
-# Executor sources
 EXEC_DIR	= src/executor
 EXEC_SRC	= $(EXEC_DIR)/executor.c \
 			  $(EXEC_DIR)/pipes.c \
 			  $(EXEC_DIR)/redirections.c \
 			  $(EXEC_DIR)/path.c
 
-# Builtins sources
 BUILTIN_DIR	= src/builtins
 BUILTIN_SRC	= $(BUILTIN_DIR)/echo.c \
 			  $(BUILTIN_DIR)/cd.c \
@@ -45,11 +21,9 @@ BUILTIN_SRC	= $(BUILTIN_DIR)/echo.c \
 			  $(BUILTIN_DIR)/env.c \
 			  $(BUILTIN_DIR)/exit.c
 
-# Signals sources
 SIGNAL_DIR	= src/signals
 SIGNAL_SRC	= $(SIGNAL_DIR)/signals.c
 
-# Utils sources
 UTILS_DIR	= src/utils
 UTILS_SRC	= $(UTILS_DIR)/utils.c \
 			  $(UTILS_DIR)/utils_str.c \
@@ -59,14 +33,12 @@ UTILS_SRC	= $(UTILS_DIR)/utils.c \
 			  $(UTILS_DIR)/ft_itoa.c \
 			  $(UTILS_DIR)/ft_atoi.c
 
-# All minishell sources
 SRCS		= $(MAIN_SRC) \
 			  $(EXEC_SRC) \
 			  $(BUILTIN_SRC) \
 			  $(SIGNAL_SRC) \
 			  $(UTILS_SRC)
 
-# Parser sources (external lib)
 PARSER_DIR	= parser
 PARS_DIR	= $(PARSER_DIR)/pars
 CYUTIL_DIR	= $(PARSER_DIR)/cyutil
@@ -112,20 +84,11 @@ PARSER_SRC	= $(PARSER_DIR)/main.c \
 			  $(CYUTIL_DIR)/cy_strlen.c \
 			  $(CYUTIL_DIR)/cy_true_strdup.c
 
-# Remove parser main.c for linking
 PARSER_LIB_SRC = $(filter-out $(PARSER_DIR)/main.c, $(PARSER_SRC))
-
-# **************************************************************************** #
-# OBJECTS
-# **************************************************************************** #
 
 OBJS		= $(SRCS:.c=.o)
 PARSER_OBJS	= $(PARSER_LIB_SRC:.c=.o)
 ALL_OBJS	= $(OBJS) $(PARSER_OBJS)
-
-# **************************************************************************** #
-# RULES
-# **************************************************************************** #
 
 all: $(NAME)
 

@@ -21,8 +21,6 @@ int	create_pipe(int pipe_fd[2])
 */
 void	setup_pipe_child(int pipe_fd[2], int prev_pipe, int is_last)
 {
-	//debug_print_pipe_state(prev_pipe, pipe_fd);
-	
 	if (prev_pipe != -1)
 	{
 		dup2(prev_pipe, STDIN_FILENO);
@@ -36,9 +34,6 @@ void	setup_pipe_child(int pipe_fd[2], int prev_pipe, int is_last)
 	}
 }
 
-/*
-** Close pipes in parent after fork
-*/
 /*
 ** Close pipes in parent after fork
 */
@@ -108,7 +103,6 @@ static void	create_temp_filename(char *buffer, int counter)
 		buffer[i++] = '0';
 	else
 	{
-		/* Convert number to string manually */
 		if (temp >= 10)
 			buffer[i++] = (temp / 10) + '0';
 		buffer[i++] = (temp % 10) + '0';
@@ -232,12 +226,6 @@ int	execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	while (i < cmd_count)
 	{
 		waitpid(pids[i], &exec.status, 0);
-		
-		/* Si dernier processus tué par SIGINT, afficher retour à la ligne
-		if (i == cmd_count - 1 && WIFSIGNALED(exec.status) 
-			&& WTERMSIG(exec.status) == SIGINT)
-			write(STDOUT_FILENO, "\n", 1);
-		*/
 		i++;
 	}
 	free(pids);
@@ -246,56 +234,3 @@ int	execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	return (WEXITSTATUS(exec.status));
 }
 
-
-/*
-** Execute a pipeline of commands
-
-int	execute_pipeline(t_cmd *cmd_list, t_shell *shell)
-{
-	t_exec	exec;
-	t_cmd	*current;
-	pid_t	*pids;
-	int		cmd_count;
-	int		i;
-
-	cmd_count = 0;
-	current = cmd_list;
-	while (current && ++cmd_count)
-		current = current->next;
-	pids = malloc(sizeof(pid_t) * cmd_count);
-	if (!pids)
-		return (1);
-	exec.prev_pipe = -1;
-	current = cmd_list;
-	i = 0;
-	while (current)
-	{
-		if (current->next && create_pipe(exec.pipe_fd) == -1)
-		{
-			free(pids);
-			return (1);
-		}
-		pids[i] = execute_piped_command(current, shell,
-			exec.prev_pipe, current->next ? exec.pipe_fd : NULL);
-		if (pids[i] == -1)
-		{
-			free(pids);
-			return (1);
-		}
-		close_pipe_parent(current->next ? exec.pipe_fd : NULL, &exec.prev_pipe);
-		current = current->next;
-		i++;
-	}
-	i = 0;
-	exec.status = 0;
-	while (i < cmd_count)
-	{
-		waitpid(pids[i], &exec.status, 0);
-		i++;
-	}
-	free(pids);
-	if (WIFSIGNALED(exec.status))
-		return (128 + WTERMSIG(exec.status));
-	return (WEXITSTATUS(exec.status));
-}
-*/

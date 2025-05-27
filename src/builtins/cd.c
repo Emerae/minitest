@@ -84,5 +84,7 @@ int	builtin_cd(char **args, char ***env)
 	has_old_pwd = save_current_pwd(old_pwd, sizeof(old_pwd));
 	if (change_directory(path))
 		return (1);
-	return (update_pwd_env(env, has_old_pwd ? old_pwd : NULL));
+	if (has_old_pwd)
+		return (update_pwd_env(env, old_pwd));
+	return (update_pwd_env(env, NULL));
 }
