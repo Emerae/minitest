@@ -13,26 +13,13 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../parser/prser.h"
-
-/* ************************************************************************** */
-/*                                   MACROS                                   */
-/* ************************************************************************** */
-
 # define PROMPT "minishell$ "
 # define ERROR_CMD_NOT_FOUND 127
 # define ERROR_PERMISSION 126
 # define ERROR_SYNTAX 2
 # define ERROR_MALLOC 1
 
-/* ************************************************************************** */
-/*                              GLOBAL VARIABLE                               */
-/* ************************************************************************** */
-
 extern volatile sig_atomic_t	g_signal_received;
-
-/* ************************************************************************** */
-/*                                STRUCTURES                                  */
-/* ************************************************************************** */
 
 typedef struct s_shell
 {
@@ -40,8 +27,8 @@ typedef struct s_shell
 	int		last_exit_status;
 	int		in_pipe;
 	int		in_child;
-	pid_t	current_child_pid;  /* Ajoutez ça */
-}	t_shell;
+	pid_t	current_child_pid;
+}			t_shell;
 
 typedef struct s_exec
 {
@@ -49,20 +36,12 @@ typedef struct s_exec
 	int		prev_pipe;
 	pid_t	pid;
 	int		status;
-}	t_exec;
-
-/* ************************************************************************** */
-/*                               MAIN FUNCTIONS                               */
-/* ************************************************************************** */
+}			t_exec;
 
 /* main.c */
 void	shell_loop(t_shell *shell);
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
-
-/* ************************************************************************** */
-/*                                 EXECUTOR                                   */
-/* ************************************************************************** */
 
 /* executor.c */
 int		execute_command_line(t_cmd *cmd_list, t_shell *shell);
@@ -83,10 +62,6 @@ int		handle_heredoc(char *delimiter);
 char	*find_command_path(char *cmd, char **env);
 char	**get_paths_from_env(char **env);
 int		is_builtin(char *cmd);
-
-/* ************************************************************************** */
-/*                                 BUILTINS                                   */
-/* ************************************************************************** */
 
 /* builtins_manager.c */
 int		execute_builtin(t_cmd *cmd, t_shell *shell);
@@ -112,10 +87,6 @@ int		builtin_env(char **env);
 /* exit.c */
 int		builtin_exit(char **args, t_shell *shell);
 
-/* ************************************************************************** */
-/*                                  SIGNALS                                   */
-/* ************************************************************************** */
-
 /* signals.c */
 void	handle_sigusr1(int sig);
 void	setup_signals(void);
@@ -132,20 +103,12 @@ void	restore_terminal_attrs(t_shell *shell);
 void	handle_sigint_heredoc(int sig);
 void	setup_heredoc_signals(void);
 
-/* ************************************************************************** */
-/*                              ENVIRONMENT                                   */
-/* ************************************************************************** */
-
 /* env_utils.c */
 char	**copy_env(char **envp);
 void	free_env(char **env);
 char	*get_env_value(char **env, char *key);
 int		set_env_value(char ***env, char *key, char *value);
 int		unset_env_value(char ***env, char *key);
-
-/* ************************************************************************** */
-/*                                  UTILS                                     */
-/* ************************************************************************** */
 
 /* utils.c */
 void	free_string_array(char **array);
