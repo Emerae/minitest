@@ -2,7 +2,6 @@
 
 /*
 ** Check if variable name is valid
-** Must start with letter or underscore, then alphanumeric or underscore
 */
 static int	is_valid_identifier(char *str)
 {
@@ -28,9 +27,9 @@ static int	is_valid_identifier(char *str)
 }
 
 /*
-** Print all exported variables (sorted)
+** Sort environment array using bubble sort
 */
-static void	print_sorted_env(char **env)
+static void	sort_env_array(char **env)
 {
 	int		i;
 	int		j;
@@ -52,6 +51,15 @@ static void	print_sorted_env(char **env)
 		}
 		i++;
 	}
+}
+
+/*
+** Print sorted environment variables with declare -x prefix
+*/
+static void	print_env_variables(char **env)
+{
+	int	i;
+
 	i = 0;
 	while (env[i])
 	{
@@ -63,36 +71,57 @@ static void	print_sorted_env(char **env)
 }
 
 /*
-** Export a variable
+** Print all exported variables (sorted)
 */
-static int	export_var(char ***env, char *arg)
+static void	print_sorted_env(char **env)
 {
-	char	*equal;
-	char	*key;
-	char	*value;
-	int		key_len;
+	sort_env_array(env);
+	print_env_variables(env);
+}
 
-	equal = ft_strchr(arg, '=');
-	if (!equal)
+/*
+** Parse argument into key and value components
+*/
+static int	parse_export_arg(char *arg, char **key, char **value, char **equal)
+{
+	int	key_len;
+
+	*equal = ft_strchr(arg, '=');
+	if (!*equal)
 	{
-		key = arg;
-		value = "";
+		*key = arg;
+		*value = "";
+		return (0);
 	}
-	else
-	{
-		key_len = equal - arg;
-		key = malloc(key_len + 1);
-		if (!key)
-			return (1);
-		ft_strncpy(key, arg, key_len);
-		key[key_len] = '\0';
-		value = equal + 1;
-	}
+	key_len = *equal - arg;
+	*key = malloc(key_len + 1);
+	if (!*key)
+		return (1);
+	ft_strncpy(*key, arg, key_len);
+	(*key)[key_len] = '\0';
+	*value = *equal + 1;
+	return (0);
+}
+
+/*
+** Print export error message
+*/
+static void	print_export_error(char *arg)
+{
+	write(STDERR_FILENO, "minishell: export: `", 20);
+	write(STDERR_FILENO, arg, ft_strlen(arg));
+	write(STDERR_FILENO, "': not a valid identifier\n", 26);
+}
+
+/*
+** Validate identifier and handle error
+*/
+static int	validate_and_export(char ***env, char *arg, char *key,
+								char *value, char *equal)
+{
 	if (!is_valid_identifier(key))
 	{
-		write(STDERR_FILENO, "minishell: export: `", 20);
-		write(STDERR_FILENO, arg, ft_strlen(arg));
-		write(STDERR_FILENO, "': not a valid identifier\n", 26);
+		print_export_error(arg);
 		if (equal)
 			free(key);
 		return (1);
@@ -101,6 +130,20 @@ static int	export_var(char ***env, char *arg)
 	if (equal)
 		free(key);
 	return (0);
+}
+
+/*
+** Export a variable
+*/
+static int	export_var(char ***env, char *arg)
+{
+	char	*equal;
+	char	*key;
+	char	*value;
+
+	if (parse_export_arg(arg, &key, &value, &equal))
+		return (1);
+	return (validate_and_export(env, arg, key, value, equal));
 }
 
 /*

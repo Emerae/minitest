@@ -47,13 +47,48 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 }
 
 /*
+** Execute command in child process
+*/
+static void	execute_child_process(t_cmd *cmd, t_shell *shell)
+{
+	char	*cmd_path;
+
+	setup_child_signals();
+	if (setup_redirections(cmd->redirs) == -1)
+		exit(1);
+	if (is_builtin(cmd->args[0]))
+		exit(execute_builtin(cmd, shell));
+	cmd_path = find_command_path(cmd->args[0], shell->env);
+	if (!cmd_path)
+	{
+		print_error(cmd->args[0], "command not found");
+		exit(ERROR_CMD_NOT_FOUND);
+	}
+	execve(cmd_path, cmd->args, shell->env);
+	perror("minishell: execve");
+	free(cmd_path);
+	exit(ERROR_PERMISSION);
+}
+
+/*
+** Wait for child process and get exit status
+*/
+static int	wait_child_process(pid_t pid)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (WEXITSTATUS(status));
+}
+
+/*
 ** Execute external command with fork and execve
 */
 static int	execute_external_command(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
-	int		status;
-	char	*cmd_path;
 
 	pid = fork();
 	if (pid == -1)
@@ -62,27 +97,8 @@ static int	execute_external_command(t_cmd *cmd, t_shell *shell)
 		return (1);
 	}
 	if (pid == 0)
-	{
-		setup_child_signals();
-		if (setup_redirections(cmd->redirs) == -1)
-			exit(1);
-		if (is_builtin(cmd->args[0]))
-			exit(execute_builtin(cmd, shell));
-		cmd_path = find_command_path(cmd->args[0], shell->env);
-		if (!cmd_path)
-		{
-			print_error(cmd->args[0], "command not found");
-			exit(ERROR_CMD_NOT_FOUND);
-		}
-		execve(cmd_path, cmd->args, shell->env);
-		perror("minishell: execve");
-		free(cmd_path);
-		exit(ERROR_PERMISSION);
-	}
-	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
-	return (WEXITSTATUS(status));
+		execute_child_process(cmd, shell);
+	return (wait_child_process(pid));
 }
 
 /*
@@ -147,37 +163,13 @@ int	execute_simple_command(t_cmd *cmd, t_shell *shell)
 }
 
 /*
-** Execute a simple command (no pipes)
-
-int	execute_simple_command(t_cmd *cmd, t_shell *shell)
-{
-	if (!cmd || !cmd->args || !cmd->args[0])
-		return (0);
-	if (is_builtin(cmd->args[0]))
-	{
-		if (cmd->redirs)
-		{
-			return (execute_external_command(cmd, shell));
-		}
-		return (execute_builtin(cmd, shell));
-	}
-	return (execute_external_command(cmd, shell));
-}
-*/
-
-/*
 ** Main execution function - dispatch based on command type
 */
 int	execute_command_line(t_cmd *cmd_list, t_shell *shell)
 {
-	
 	if (!cmd_list)
 		return (0);
-	
 	if (!cmd_list->next)
-	{
-		//debug_print_cmd(cmd_list);
 		return (execute_simple_command(cmd_list, shell));
-	}
 	return (execute_pipeline(cmd_list, shell));
 }

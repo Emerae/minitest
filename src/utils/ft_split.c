@@ -72,21 +72,30 @@ static char	*extract_word(char const *s, int len)
 }
 
 /*
-** Split string by delimiter
+** Allocate array for split words
 */
-char	**ft_split(char const *s, char c)
+static char	**allocate_split_array(char const *s, char c)
 {
 	char	**array;
 	int		words;
-	int		i;
-	int		len;
 
 	if (!s)
 		return (NULL);
 	words = count_words(s, c);
 	array = malloc(sizeof(char *) * (words + 1));
-	if (!array)
-		return (NULL);
+	return (array);
+}
+
+/*
+** Fill array with extracted words
+*/
+static int	fill_split_array(char **array, char const *s, char c)
+{
+	int		words;
+	int		i;
+	int		len;
+
+	words = count_words(s, c);
 	i = 0;
 	while (i < words)
 	{
@@ -97,11 +106,26 @@ char	**ft_split(char const *s, char c)
 		if (!array[i])
 		{
 			free_split(array, i);
-			return (NULL);
+			return (1);
 		}
 		s += len;
 		i++;
 	}
 	array[i] = NULL;
+	return (0);
+}
+
+/*
+** Split string by delimiter
+*/
+char	**ft_split(char const *s, char c)
+{
+	char	**array;
+
+	array = allocate_split_array(s, c);
+	if (!array)
+		return (NULL);
+	if (fill_split_array(array, s, c))
+		return (NULL);
 	return (array);
 }

@@ -2,7 +2,6 @@
 
 /*
 ** Copy the environment variables
-** Returns a malloc'd copy of envp
 */
 char	**copy_env(char **envp)
 {
@@ -53,7 +52,6 @@ void	free_env(char **env)
 
 /*
 ** Get value of an environment variable
-** Returns pointer to value after '=' or NULL if not found
 */
 char	*get_env_value(char **env, char *key)
 {
@@ -106,7 +104,6 @@ char	**realloc_env(char **env, int new_size)
 
 /*
 ** Find index of environment variable
-** Returns index or -1 if not found
 */
 static int	find_env_index(char **env, char *key)
 {
@@ -130,32 +127,40 @@ static int	find_env_index(char **env, char *key)
 }
 
 /*
-** Set or update an environment variable
-** Creates new entry if doesn't exist
+** Create new environment entry "key=value"
 */
-int	set_env_value(char ***env, char *key, char *value)
+static char	*create_env_entry(char *key, char *value)
 {
-	char	**new_env;
 	char	*new_entry;
-	int		index;
-	int		count;
 
-	if (!env || !*env || !key)
-		return (1);
 	new_entry = malloc(ft_strlen(key) + ft_strlen(value) + 2);
 	if (!new_entry)
-		return (1);
+		return (NULL);
 	ft_strcpy(new_entry, key);
 	ft_strcat(new_entry, "=");
 	if (value)
 		ft_strcat(new_entry, value);
-	index = find_env_index(*env, key);
-	if (index >= 0)
-	{
-		free((*env)[index]);
-		(*env)[index] = new_entry;
-		return (0);
-	}
+	return (new_entry);
+}
+
+/*
+** Update existing environment variable
+*/
+static int	update_existing_env(char ***env, char *new_entry, int index)
+{
+	free((*env)[index]);
+	(*env)[index] = new_entry;
+	return (0);
+}
+
+/*
+** Add new environment variable to array
+*/
+static int	add_new_env_entry(char ***env, char *new_entry)
+{
+	char	**new_env;
+	int		count;
+
 	count = count_string_array(*env);
 	new_env = realloc_env(*env, count + 1);
 	if (!new_env)
@@ -167,6 +172,25 @@ int	set_env_value(char ***env, char *key, char *value)
 	new_env[count + 1] = NULL;
 	*env = new_env;
 	return (0);
+}
+
+/*
+** Set or update an environment variable
+*/
+int	set_env_value(char ***env, char *key, char *value)
+{
+	char	*new_entry;
+	int		index;
+
+	if (!env || !*env || !key)
+		return (1);
+	new_entry = create_env_entry(key, value);
+	if (!new_entry)
+		return (1);
+	index = find_env_index(*env, key);
+	if (index >= 0)
+		return (update_existing_env(env, new_entry, index));
+	return (add_new_env_entry(env, new_entry));
 }
 
 /*

@@ -2,10 +2,6 @@
 
 /*
 ** Open file with appropriate flags based on redirection type
-** Type 0: < (input)
-** Type 1: > (output truncate)
-** Type 2: >> (output append)
-** Type 3: << (heredoc)
 */
 int	open_file_for_redirect(char *filename, int type)
 {
@@ -29,93 +25,80 @@ int	open_file_for_redirect(char *filename, int type)
 	return (fd);
 }
 
-
-int	handle_heredoc(char *delimiter)
+/*
+** Handle interruption in heredoc
+*/
+static int	handle_heredoc_interruption(int pipe_fd[2])
 {
-	int		pipe_fd[2];
-	char	*line;
-	
-	if (pipe(pipe_fd) == -1)
+	if (g_signal_received == SIGINT)
+	{
+		g_signal_received = 0;
+		close(pipe_fd[1]);
+		close(pipe_fd[0]);
+		setup_signals();
 		return (-1);
-	setup_heredoc_signals();
+	}
+	return (0);
+}
+
+/*
+** Process a single line in heredoc
+*/
+static int	process_heredoc_line(char *line, char *delimiter, int pipe_fd[2])
+{
+	if (ft_strcmp(line, delimiter) == 0)
+	{
+		free(line);
+		return (1);
+	}
+	write(pipe_fd[1], line, ft_strlen(line));
+	write(pipe_fd[1], "\n", 1);
+	free(line);
+	return (0);
+}
+
+/*
+** Read heredoc input until delimiter or interruption
+*/
+static int	read_heredoc_loop(char *delimiter, int pipe_fd[2])
+{
+	char	*line;
+	int		line_result;
+
 	while (1)
 	{
 		line = readline("> ");
 		if (!line || g_signal_received == SIGINT)
 		{
-			if (g_signal_received == SIGINT)
-			{
-				g_signal_received = 0;  // Nettoyer ici
-				close(pipe_fd[1]);
-				close(pipe_fd[0]);
-				setup_signals();
+			if (handle_heredoc_interruption(pipe_fd) == -1)
 				return (-1);
-			}
 			break ;
 		}
-		if (ft_strcmp(line, delimiter) == 0)
-		{
-			free(line);
+		line_result = process_heredoc_line(line, delimiter, pipe_fd);
+		if (line_result == 1)
 			break ;
-		}
-		write(pipe_fd[1], line, ft_strlen(line));
-		write(pipe_fd[1], "\n", 1);
-		free(line);
+		if (line_result == -1)
+			return (-1);
 	}
-	close(pipe_fd[1]);
-	setup_signals();
-	return (pipe_fd[0]);
+	return (0);
 }
 
 /*
 ** Handle heredoc redirection
-** Read input until delimiter is found
-
+*/
 int	handle_heredoc(char *delimiter)
 {
-	int		pipe_fd[2];
-	char	*line;
-	//size_t	delim_len;
+	int	pipe_fd[2];
 
-	DEBUG_REDIR_MSG("Starting heredoc with delimiter '%s'", delimiter);
-	
 	if (pipe(pipe_fd) == -1)
-	{
-		DEBUG_ERROR("Failed to create pipe for heredoc");
 		return (-1);
-	}
-	//delim_len = ft_strlen(delimiter);
 	setup_heredoc_signals();
-	while (1)
-	{
-		line = readline("> ");
-		if (!line || g_signal_received == SIGINT)
-		{
-			if (g_signal_received == SIGINT)
-			{
-				DEBUG_SIGNAL_MSG("Heredoc interrupted by SIGINT");
-				g_signal_received = 0;
-			}
-			else
-				DEBUG_REDIR_MSG("Heredoc EOF reached");
-			break ;
-		}
-		if (ft_strcmp(line, delimiter) == 0)
-		{
-			DEBUG_REDIR_MSG("Heredoc delimiter found");
-			free(line);
-			break ;
-		}
-		write(pipe_fd[1], line, ft_strlen(line));
-		write(pipe_fd[1], "\n", 1);
-		free(line);
-	}
+	if (read_heredoc_loop(delimiter, pipe_fd) == -1)
+		return (-1);
 	close(pipe_fd[1]);
 	setup_signals();
-	DEBUG_REDIR_MSG("Heredoc completed, returning read fd %d", pipe_fd[0]);
 	return (pipe_fd[0]);
 }
-*/
 
 /*
 ** Apply a single redirection
@@ -131,7 +114,6 @@ static int	apply_redirection(t_redir *redir)
 		fd = open_file_for_redirect(redir->file, redir->type);
 	if (fd == -1)
 		return (-1);
-		
 	if (redir->type == 0 || redir->type == 3)
 		target_fd = STDIN_FILENO;
 	else
@@ -161,3 +143,4 @@ int	setup_redirections(t_redir *redirs)
 	}
 	return (0);
 }
+

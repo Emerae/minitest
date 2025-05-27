@@ -53,93 +53,58 @@ char	**get_paths_from_env(char **env)
 	return (paths);
 }
 
-
 /*
-** Find command in PATH or as absolute/relative path
+** Handle absolute or relative path commands
 */
-char	*find_command_path(char *cmd, char **env)
+static char	*handle_absolute_path(char *cmd)
 {
-	char		**paths;
-	char		*cmd_path;
-	int			i;
 	struct stat	statbuf;
-	
-	if (!cmd || !*cmd)
+
+	if (stat(cmd, &statbuf) == -1)
 		return (NULL);
-	if (ft_strchr(cmd, '/'))
-	{
-		/* Pour les chemins absolus/relatifs, vérifier seulement l'existence
-		 * Si le fichier existe, retourner le chemin même s'il n'est pas exécutable
-		 * execve() se chargera de l'erreur de permission appropriée */
-		if (stat(cmd, &statbuf) == -1)
-			return (NULL);  /* Fichier inexistant → command not found */
-		if (S_ISREG(statbuf.st_mode))
-			return (ft_strdup(cmd));  /* Fichier existe → laisser execve gérer */
-		return (NULL);
-	}
-	/* Reste du code inchangé pour les commandes dans PATH */
-	paths = get_paths_from_env(env);
-	if (!paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		cmd_path = check_path(paths[i], cmd);
-		if (cmd_path)
-		{
-			free_string_array(paths);
-			return (cmd_path);
-		}
-		i++;
-	}
-	free_string_array(paths);
+	if (S_ISREG(statbuf.st_mode))
+		return (ft_strdup(cmd));
 	return (NULL);
 }
 
 /*
-** Find command in PATH or as absolute/relative path
-
-char	*find_command_path(char *cmd, char **env)
+** Search command in PATH directories
+*/
+static char	*search_in_path(char *cmd, char **env)
 {
 	char	**paths;
 	char	*cmd_path;
 	int		i;
 
-	DEBUG_PATH_MSG("Searching for command '%s'", cmd);
-	
-	if (!cmd || !*cmd)
-		return (NULL);
-	if (ft_strchr(cmd, '/'))
-	{
-		DEBUG_PATH_MSG("Command contains '/', checking as absolute/relative path");
-		if (is_executable(cmd))
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
 	paths = get_paths_from_env(env);
 	if (!paths)
-	{
-		DEBUG_ERROR("No PATH found in environment");
 		return (NULL);
-	}
 	i = 0;
 	while (paths[i])
 	{
-		DEBUG_TRACE("Checking in directory: %s", paths[i]);
 		cmd_path = check_path(paths[i], cmd);
 		if (cmd_path)
 		{
-			DEBUG_PATH_MSG("Command found: %s", cmd_path);
 			free_string_array(paths);
 			return (cmd_path);
 		}
 		i++;
 	}
-	DEBUG_PATH_MSG("Command '%s' not found in PATH", cmd);
 	free_string_array(paths);
 	return (NULL);
 }
+
+/*
+** Find command in PATH or as absolute/relative path
 */
+char	*find_command_path(char *cmd, char **env)
+{
+	if (!cmd || !*cmd)
+		return (NULL);
+	if (ft_strchr(cmd, '/'))
+		return (handle_absolute_path(cmd));
+	return (search_in_path(cmd, env));
+}
 
 /*
 ** Print command error message
