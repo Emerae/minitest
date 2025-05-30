@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Count number of digits in number
-*/
 static int	count_digits(int n)
 {
 	int	count;
@@ -20,9 +17,6 @@ static int	count_digits(int n)
 	return (count);
 }
 
-/*
-** Get absolute value safely (handle INT_MIN)
-*/
 static unsigned int	get_abs_value(int n)
 {
 	if (n < 0)
@@ -30,9 +24,6 @@ static unsigned int	get_abs_value(int n)
 	return ((unsigned int)n);
 }
 
-/*
-** Convert integer to string
-*/
 char	*ft_itoa(int n)
 {
 	char			*str;

@@ -28,6 +28,7 @@ typedef struct s_shell
 	int		in_pipe;
 	int		in_child;
 	pid_t	current_child_pid;
+	int		should_exit;   
 }			t_shell;
 
 typedef struct s_exec

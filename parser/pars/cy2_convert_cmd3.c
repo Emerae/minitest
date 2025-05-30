@@ -19,6 +19,36 @@ void	append_cmd3(t_cmd *new_cmd, t_cmd **current_cmd)
 int	append_cmd2(t_cmd *new_cmd, int n_delimiter, t_input **input_node)
 {
 	int	i;
+	int	j;
+
+	i = 0;
+	while (i < n_delimiter && *input_node)
+	{
+		new_cmd->args[i] = cy_true_strdup((*input_node)->input);
+		if (!new_cmd->args[i])
+		{
+			j = 0;
+			while (j < i)
+			{
+				free(new_cmd->args[j]);
+				j++;
+			}
+			return (1);
+		}
+		*input_node = (*input_node)->next;
+		i = i + 1;
+	}
+	new_cmd->args[i] = NULL;
+	new_cmd->redirs = NULL;
+	new_cmd->builtin_id = -1;
+	new_cmd->next = NULL;
+	return (0);
+}
+
+/*
+int	append_cmd2(t_cmd *new_cmd, int n_delimiter, t_input **input_node)
+{
+	int	i;
 
 	i = 0;
 	while (i < n_delimiter && *input_node)
@@ -35,6 +65,7 @@ int	append_cmd2(t_cmd *new_cmd, int n_delimiter, t_input **input_node)
 	new_cmd->next = NULL;
 	return (0);
 }
+*/
 
 int	append_cmd1(t_cmd **new_cmd, int n_delimiter)
 {

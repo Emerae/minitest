@@ -1,17 +1,11 @@
 #include "../../includes/minishell.h"
 
-/*
-** Check if character is space
-*/
 static int	is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n'
 		|| c == '\v' || c == '\f' || c == '\r');
 }
 
-/*
-** Convert string to integer
-*/
 int	ft_atoi(const char *str)
 {
 	int		sign;
@@ -41,9 +35,6 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-/*
-** Check if character is digit
-*/
 int	ft_isdigit(int c)
 {
 	return (c >= '0' && c <= '9');

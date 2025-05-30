@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Count number of words separated by delimiter
-*/
 static int	count_words(char const *s, char c)
 {
 	int	count;
@@ -24,9 +21,6 @@ static int	count_words(char const *s, char c)
 	return (count);
 }
 
-/*
-** Get length of next word
-*/
 static int	get_word_len(char const *s, char c)
 {
 	int	len;
@@ -37,9 +31,6 @@ static int	get_word_len(char const *s, char c)
 	return (len);
 }
 
-/*
-** Free array on allocation error
-*/
 static void	free_split(char **array, int i)
 {
 	while (i > 0)
@@ -50,9 +41,6 @@ static void	free_split(char **array, int i)
 	free(array);
 }
 
-/*
-** Extract word from string
-*/
 static char	*extract_word(char const *s, int len)
 {
 	char	*word;
@@ -71,9 +59,6 @@ static char	*extract_word(char const *s, int len)
 	return (word);
 }
 
-/*
-** Allocate array for split words
-*/
 static char	**allocate_split_array(char const *s, char c)
 {
 	char	**array;
@@ -86,9 +71,6 @@ static char	**allocate_split_array(char const *s, char c)
 	return (array);
 }
 
-/*
-** Fill array with extracted words
-*/
 static int	fill_split_array(char **array, char const *s, char c)
 {
 	int		words;
@@ -115,9 +97,6 @@ static int	fill_split_array(char **array, char const *s, char c)
 	return (0);
 }
 
-/*
-** Split string by delimiter
-*/
 char	**ft_split(char const *s, char c)
 {
 	char	**array;

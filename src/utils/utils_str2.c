@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Copy n characters from src to dst
-*/
 char	*ft_strncpy(char *dst, const char *src, size_t n)
 {
 	size_t	i;
@@ -21,9 +18,6 @@ char	*ft_strncpy(char *dst, const char *src, size_t n)
 	return (dst);
 }
 
-/*
-** Duplicate string array
-*/
 char	**duplicate_string_array(char **array)
 {
 	char	**dup;

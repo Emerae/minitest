@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Free a string array
-*/
 void	free_string_array(char **array)
 {
 	int	i;
@@ -18,9 +15,6 @@ void	free_string_array(char **array)
 	free(array);
 }
 
-/*
-** Duplicate a string
-*/
 char	*ft_strdup(const char *s)
 {
 	char	*dup;
@@ -41,9 +35,6 @@ char	*ft_strdup(const char *s)
 	return (dup);
 }
 
-/*
-** Get string length
-*/
 size_t	ft_strlen(const char *s)
 {
 	size_t	len;
@@ -54,9 +45,6 @@ size_t	ft_strlen(const char *s)
 	return (len);
 }
 
-/*
-** Compare strings
-*/
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	while (*s1 && *s2 && *s1 == *s2)
@@ -67,9 +55,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return ((unsigned char)*s1 - (unsigned char)*s2);
 }
 
-/*
-** Compare n characters of strings
-*/
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
@@ -82,9 +67,6 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-/*
-** Find character in string
-*/
 char	*ft_strchr(const char *s, int c)
 {
 	while (*s)
