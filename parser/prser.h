@@ -148,6 +148,7 @@ char	**cy0_copy_env_from_proc(void);
 // char	**cy0_init_env(void);
 int		cy0_analyse_char(char c);
 int		cy0_analyse_char2(char c);
+int		cy0_check_quote_1(char *s);
 void	cy0_free_input_list(t_input *head);
 void	cy0_free_env(char **env, int i);
 void	cy00_free_env(char **env);

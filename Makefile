@@ -46,6 +46,7 @@ CYUTIL_DIR	=	$(PARSER_DIR)/cyutil
 
 PARSER_SRC  =	$(PARSER_DIR)/main.c \
 				$(PARS_DIR)/cy0_check_char.c \
+				$(PARS_DIR)/cy0_check_quotes.c \
 				$(PARS_DIR)/cy0_freeer.c \
 				$(PARS_DIR)/cy0_init_env.c \
 				$(PARS_DIR)/cy1_1_remove_space_nodes.c \

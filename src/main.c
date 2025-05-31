@@ -123,6 +123,8 @@ void	shell_loop(t_shell *shell)
 				add_history(line);
 			rl_event_hook = NULL;
 			g_signal_received = 0;
+			if (!cy0_check_quote_1(line))
+				process_line(line, shell);
 			process_line(line, shell);
 			rl_event_hook = check_signals_hook;
 			if (g_signal_received == SIGINT)
