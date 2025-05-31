@@ -32,17 +32,16 @@ int	builtin_exit(char **args, t_shell *shell)
 	write(STDERR_FILENO, "exit\n", 5);
 	if (!args[1])
 	{
-		shell->should_exit = 1;
-		return (0);
+		cleanup_shell(shell);
+		exit(shell->last_exit_status);
 	}
 	if (!is_numeric(args[1]))
 	{
 		write(STDERR_FILENO, "minishell: exit: ", 17);
 		write(STDERR_FILENO, args[1], ft_strlen(args[1]));
 		write(STDERR_FILENO, ": numeric argument required\n", 28);
-		shell->last_exit_status = 255;
-		shell->should_exit = 1;
-		return (0);
+		cleanup_shell(shell);
+		exit(255);
 	}
 	if (args[2])
 	{
@@ -50,7 +49,6 @@ int	builtin_exit(char **args, t_shell *shell)
 		return (1);
 	}
 	exit_code = ft_atoi(args[1]) % 256;
-	shell->last_exit_status = exit_code;
-	shell->should_exit = 1;
-	return (0);
+	cleanup_shell(shell);
+	exit(exit_code);
 }

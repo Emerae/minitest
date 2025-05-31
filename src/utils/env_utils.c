@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Copy the environment variables
-*/
 char	**copy_env(char **envp)
 {
 	char	**new_env;
@@ -32,9 +29,6 @@ char	**copy_env(char **envp)
 	return (new_env);
 }
 
-/*
-** Free the environment array
-*/
 void	free_env(char **env)
 {
 	int	i;
@@ -50,9 +44,6 @@ void	free_env(char **env)
 	free(env);
 }
 
-/*
-** Get value of an environment variable
-*/
 char	*get_env_value(char **env, char *key)
 {
 	int		i;
@@ -76,9 +67,6 @@ char	*get_env_value(char **env, char *key)
 	return (NULL);
 }
 
-/*
-** Reallocate environment array with new size
-*/
 char	**realloc_env(char **env, int new_size)
 {
 	char	**new_env;
@@ -102,9 +90,6 @@ char	**realloc_env(char **env, int new_size)
 	return (new_env);
 }
 
-/*
-** Find index of environment variable
-*/
 static int	find_env_index(char **env, char *key)
 {
 	int		i;
@@ -126,9 +111,6 @@ static int	find_env_index(char **env, char *key)
 	return (-1);
 }
 
-/*
-** Create new environment entry "key=value"
-*/
 static char	*create_env_entry(char *key, char *value)
 {
 	char	*new_entry;
@@ -143,9 +125,6 @@ static char	*create_env_entry(char *key, char *value)
 	return (new_entry);
 }
 
-/*
-** Update existing environment variable
-*/
 static int	update_existing_env(char ***env, char *new_entry, int index)
 {
 	free((*env)[index]);
@@ -153,9 +132,6 @@ static int	update_existing_env(char ***env, char *new_entry, int index)
 	return (0);
 }
 
-/*
-** Add new environment variable to array
-*/
 static int	add_new_env_entry(char ***env, char *new_entry)
 {
 	char	**new_env;
@@ -174,9 +150,6 @@ static int	add_new_env_entry(char ***env, char *new_entry)
 	return (0);
 }
 
-/*
-** Set or update an environment variable
-*/
 int	set_env_value(char ***env, char *key, char *value)
 {
 	char	*new_entry;
@@ -193,9 +166,6 @@ int	set_env_value(char ***env, char *key, char *value)
 	return (add_new_env_entry(env, new_entry));
 }
 
-/*
-** Remove an environment variable
-*/
 int	unset_env_value(char ***env, char *key)
 {
 	int	index;

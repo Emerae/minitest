@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Update PWD and OLDPWD environment variables
-*/
 static int	update_pwd_env(char ***env, char *old_pwd)
 {
 	char	new_pwd[4096];
@@ -15,9 +12,6 @@ static int	update_pwd_env(char ***env, char *old_pwd)
 	return (0);
 }
 
-/*
-** Validate arguments and determine target path
-*/
 static char	*get_target_path(char **args, char **env)
 {
 	char	*home;
@@ -40,9 +34,6 @@ static char	*get_target_path(char **args, char **env)
 	return (args[1]);
 }
 
-/*
-** Save current working directory
-*/
 static int	save_current_pwd(char *old_pwd, int size)
 {
 	if (!getcwd(old_pwd, size))
@@ -53,9 +44,6 @@ static int	save_current_pwd(char *old_pwd, int size)
 	return (1);
 }
 
-/*
-** Change to target directory with error handling
-*/
 static int	change_directory(char *path)
 {
 	if (chdir(path) == -1)
@@ -69,9 +57,6 @@ static int	change_directory(char *path)
 	return (0);
 }
 
-/*
-** Builtin cd command
-*/
 int	builtin_cd(char **args, char ***env)
 {
 	char	*path;
