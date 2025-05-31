@@ -1,5 +1,6 @@
 #include "../prser.h"
 
+/*
 void	print_env(char **env)
 {
 	int	i;
@@ -11,6 +12,7 @@ void	print_env(char **env)
 		i = i + 1;
 	}
 }
+*/
 
 static int	cy0_count_env_vars(char *buffer, long int size)
 {
@@ -51,7 +53,7 @@ static char	**cy0_copy_env_from_proc_1(char *buffer, int nb_var)
 		i = i + 1;
 	}
 	env[i] = NULL;
-	print_env(env);
+	//print_env(env);
 	return (env);
 }
 

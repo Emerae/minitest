@@ -63,14 +63,32 @@ void	cy3_handle_dollar_bang2(t_dollar_bang *sdb,
 ** de l'exit code (ex: "130"), pas une fausse variable "?=130".
 ** Le parser copiera directement cette valeur.
 */
+
 int	cy3_handle_dollar_bang1(t_dollar_bang *sdb, int exit_code)
 {
+	static char	exit_str[12];
+	char		*temp_str;
+	
+	temp_str = ft_itoa(exit_code);
+	if (!temp_str)
+		return (0);
+	cy_strlcpy(exit_str, temp_str, 12);
+	free(temp_str);
+	sdb->last_env = exit_str;
+	return (1);
+}
+
+/*
+int	cy3_handle_dollar_bang1(t_dollar_bang *sdb, int exit_code)
+{
+	(void)exit_code;
 	static char	exit_str[12];
 	
 	sprintf(exit_str, "%d", exit_code);
 	sdb->last_env = exit_str;
 	return (1);
 }
+*/
 
 /*
 int	cy3_handle_dollar_bang1(t_dollar_bang *sdb, char **env)

@@ -61,6 +61,6 @@ int	cy3_substi_check(t_input **head_input, char **env)
 		cy0_free_input_list(*head_input);
 		return (1);
 	}
-	printf("subtsi check success\n");
+	//printf("subtsi check success\n");
 	return (0);
 }

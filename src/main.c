@@ -22,6 +22,29 @@ void	cleanup_shell(t_shell *shell)
 		free_env(shell->env);
 }
 
+static    int is_space(char c)
+{
+    if (c == ' ' || c == '\t' || c == '\v' || c == '\n' || c == '\f' || c == '\r')
+        return (1);
+    return (0);
+}
+
+static int is_not_only_whitespace(const char *s)
+{
+    int i;
+
+    if (!s)
+        return (1);
+    i = 0;
+    while (s[i])
+    {
+        if (is_space(s[i]) == 0)
+            return (0);
+        i = i + 1;
+    }
+    return (1);
+}
+
 static void	process_line(char *line, t_shell *shell)
 {
 	t_input	*head_input;
@@ -96,7 +119,8 @@ void	shell_loop(t_shell *shell)
 		}
 		if (*line)
 		{
-			add_history(line);
+			if (is_not_only_whitespace(line) == 0)
+				add_history(line);
 			rl_event_hook = NULL;
 			g_signal_received = 0;
 			process_line(line, shell);

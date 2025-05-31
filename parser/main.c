@@ -25,6 +25,7 @@ void	print_input_list(t_input *head_input)
 	}
 }
 
+
 void	print_envv(char **env)
 {
 	int	i = 0;
@@ -36,6 +37,7 @@ void	print_envv(char **env)
 	}
 	printf("----\n");
 }
+
 
 void	print_cmd_list(t_cmd *head_cmd)
 {

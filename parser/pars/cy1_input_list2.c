@@ -1,5 +1,6 @@
 #include "../prser.h"
 
+/*
 static void	print_node_debug(int start, int end, char *input)
 {
 	int	offset;
@@ -11,6 +12,7 @@ static void	print_node_debug(int start, int end, char *input)
 	printf("create_node: start=%d, end=%d, input='", start, end);
 	printf("%.*s'\n", end - start + 1, &input[offset]);
 }
+*/
 
 static int	set_node_type(t_input *node, int start, int end)
 {
@@ -47,7 +49,7 @@ t_input	*cy1_create_node(int start, int end, char *input)
 {
 	t_input	*new_node;
 
-	print_node_debug(start, end, input);
+	//print_node_debug(start, end, input);
 	new_node = (t_input *)malloc(sizeof(t_input));
 	if (!new_node)
 	{

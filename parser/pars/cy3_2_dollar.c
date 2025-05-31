@@ -23,9 +23,9 @@ int	cy3_scan_dollar_syntax_2(t_input *current, int i, char **env, int exit_code)
 		if (current->input_num[i + 1] != current->input_num[i])
 			return (1);
 		j = i + 1;
-		printf("i = %d\n j = %d\n", i, j);
+		//printf("i = %d\n j = %d\n", i, j);
 		i = cy3_handle_dollar_bang(current, i, j, env, exit_code);
-		printf("ii = %d\njj = %d\n", i, j);
+		//printf("ii = %d\njj = %d\n", i, j);
 		if (i == -1)
 			return (1);
 		return (0);
@@ -76,10 +76,10 @@ int	cy3_scan_dollar_syntax_dollar_1(t_input *current, int *i, char **env, int ex
 		&& current->input_num[*i + 1] == current->input_num[*i + 2]
 		&& current->input_num[*i + 2] == current->input_num[*i + 3])
 	{
-		printf("found ${?}\n");
-		printf("i = %d\n", *i);
+		//printf("found ${?}\n");
+		//printf("i = %d\n", *i);
 		*i = cy3_handle_dollar_bang(current, *i, *i + 3, env, exit_code);
-		printf("ii = %d\n", *i);
+		//printf("ii = %d\n", *i);
 		if (*i == -1)
 			return (1);
 		*i = *i + 1;

@@ -225,6 +225,7 @@ int		cy4_3wrong_pipe(t_input *head);
 int		cy4_4wrong_redir_log(t_input *head);
 int		cy4_5wrong_pipe_log(t_input *head);
 
+char	*ft_itoa(int n);
 // A delet
 void	print_cmd_list(t_cmd *head_cmd);
 void	print_input_list(t_input *head_input);

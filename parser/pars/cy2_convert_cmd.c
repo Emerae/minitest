@@ -37,16 +37,16 @@ int	find_delimiter1(t_input **current_input,
 		{
 			*nature = 3;
 			*current_input = node;
-			printf("find_delimiter: ret = %d, nature = %d\n", ret, *nature);
-			printf("current_input->input = %s\n", (*current_input)->input);
+			//printf("find_delimiter: ret = %d, nature = %d\n", ret, *nature);
+			//printf("current_input->input = %s\n", (*current_input)->input);
 			return (ret);
 		}
 		ret = ret + 1;
 		node = node->next;
 	}
 	*current_input = node;
-	printf("find_delimiter: ret = %d, nature = %d\n", ret - 1, *nature);
-	printf("current_input->input = %s\n", (*current_input)->input);
+	//printf("find_delimiter: ret = %d, nature = %d\n", ret - 1, *nature);
+	//printf("current_input->input = %s\n", (*current_input)->input);
 	return (ret - 1);
 }
 
