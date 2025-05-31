@@ -53,6 +53,17 @@ int	cy3_handle_dollar_word_3(t_input *current, int i, int j)
 	return (i);
 }
 
+int    cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s, int flag)
+{
+    //char    *equal;
+
+    if (flag >= 0)
+    {
+        s->value = cy_strchr(env[s->e], '=') + 1;
+        return (cy3_handle_dollar_word_2(current, s));
+    }
+    return (cy3_handle_dollar_word_3(current, s->i, s->j));
+}
 
 /*
 ** CORRECTION CRITIQUE - Suppression du code dupliqué dangereux
@@ -64,7 +75,7 @@ int	cy3_handle_dollar_word_3(t_input *current, int i, int j)
 **
 ** Solution : Supprimer ce code dupliqué et laisser cy3_handle_dollar_word_2
 ** s'occuper de TOUTE l'allocation et l'assemblage de la chaîne.
-*/
+
 int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
 {
 	char	*equal;
@@ -76,12 +87,12 @@ int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
 			cy_strncmp(env[s->e], s->key, s->keylen) == 0)
 		{
 			s->value = equal + 1;
-			/* Supprimer tout le code de copie - cy3_handle_dollar_word_2 s'en occupe */
 			return (cy3_handle_dollar_word_2(current, s));
 		}
 	}
 	return (cy3_handle_dollar_word_3(current, s->i, s->j));
 }
+*/
 
 /*
 ** CORRECTION CRITIQUE - Bug de vérification de variable trouvée
@@ -150,7 +161,20 @@ int	cy3_handle_dollar_word_1(t_input *current, char **env, t_dollar_word *s)
 }
 */
 
+int    cy3_handle_dollar_word(t_input *current, int i, int j, char **env)
+{
+    t_dollar_word    s;
+    int                flag;
 
+    s.i = i;
+    s.j = j;
+    flag = -1;
+    cy3_handle_dollar_word_key(current, &s);
+    cy3_handle_dollar_word_findenv(&s, env, &flag);
+    return (cy3_handle_dollar_word_1(current, env, &s, flag));
+}
+
+/*
 int	cy3_handle_dollar_word(t_input *current, int i, int j, char **env)
 {
 	t_dollar_word	s;
@@ -161,4 +185,5 @@ int	cy3_handle_dollar_word(t_input *current, int i, int j, char **env)
 	cy3_handle_dollar_word_findenv(&s, env);
 	return (cy3_handle_dollar_word_1(current, env, &s));
 }
+*/
 

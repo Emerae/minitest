@@ -17,18 +17,10 @@ run_minishell() {
         echo "$cmd"
         echo "exit"
     } | timeout 5s ./minishell 2>/dev/null | \
-    grep -v "minishell\$" | \
-    grep -v "create_node:" | \
-    grep -v "subtsi check" | \
-    grep -v "find_delimiter:" | \
-    grep -v "append_cmd3:" | \
-    grep -v "current_input->input" | \
-    grep -v "^de$" | \
-    grep -v "^i = " | \
-    grep -v "^ii = " | \
+    grep -v "^minishell\\$" | \
     grep -v "^exit$" | \
     grep -v "^$" | \
-    tail -n 1
+    head -n 1
 }
 
 # Fonction pour exécuter une commande dans bash

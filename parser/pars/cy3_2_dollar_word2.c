@@ -13,6 +13,30 @@ void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s)
 	s->key[s->keylen] = '\0';
 }
 
+
+void    cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env, int *flag)
+{
+    char    *equal;
+
+    s->e = 0;
+    while (env[s->e])
+    {
+        equal = cy_strchr(env[s->e], '=');
+        if (!equal)
+        {
+            s->e = s->e + 1;
+            continue ;
+        }
+        if ((int)(equal - env[s->e]) == s->keylen &&
+            cy_strncmp(env[s->e], s->key, s->keylen) == 0)
+        {
+            *flag = s->e;
+            break ;
+        }
+        s->e = s->e + 1;
+    }
+}
+
 /*
 ** CORRECTION CRITIQUE - Bug d'expansion de variables
 ** 
@@ -30,7 +54,7 @@ void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s)
 ** et supprimée au lieu d'être remplacée par sa valeur.
 **
 ** Solution : Vérifier env[s->e] directement au lieu de env[s->e + 1]
-*/
+
 void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)
 {
 	char	*equal;
@@ -50,6 +74,7 @@ void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)
 		s->e = s->e + 1;
 	}
 }
+*/
 
 /*
 void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env)

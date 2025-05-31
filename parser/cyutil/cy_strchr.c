@@ -15,5 +15,5 @@ char	*cy_strchr(const char *s, int c)
 			break ;
 		i = i + 1;
 	}
-	return (0);
+	return (NULL);
 }

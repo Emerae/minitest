@@ -14,6 +14,33 @@ void	cy3_handle_dollar_brace2(t_dollar_braces *s,
 	s->key[s->keylen] = '\0';
 }
 
+void    cy3_handle_dollar_brace3(t_dollar_braces *s, char **env)
+{
+    int    flag;
+
+    flag = 0;
+    s->e = 0;
+    while (env[s->e])
+    {
+        s->equal = cy_strchr(env[s->e], '=');
+        if (!s->equal)
+        {
+            s->e = s->e + 1;
+            continue ;
+        }
+        if ((int)(s->equal - env[s->e]) == s->keylen &&
+            cy_strncmp(env[s->e], s->key, s->keylen) == 0)
+            {
+                flag = 1;
+                break ;
+            }
+        s->e = s->e + 1;
+    }
+    if (flag == 1)
+        s->value = cy_strchr(env[s->e], '=') + 1;
+}
+
+/*
 void	cy3_handle_dollar_brace3(t_dollar_braces *s, char **env)
 {
 	s->e = 0;
@@ -33,6 +60,7 @@ void	cy3_handle_dollar_brace3(t_dollar_braces *s, char **env)
 	if (env[s->e + 1])
 		s->value = cy_strchr(env[s->e], '=') + 1;
 }
+*/
 
 int	cy3_handle_dollar_brace4(t_input *current, int i, int j, t_dollar_braces *s)
 {

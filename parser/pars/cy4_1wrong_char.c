@@ -1,5 +1,31 @@
 #include "../prser.h"
 
+int    cy4_1wrong_char(t_input *head)
+{
+    t_input    *current;
+    int        i;
+
+    current = head;
+    while (current)
+    {
+        if (current->input)
+        {
+            i = 0;
+            while (current->input[i])
+            {
+                if (cy0_analyse_char2(current->input[i]) >= 1 && current->type == 2)
+                    return (1);
+                if (cy0_analyse_char2(current->input[i]) == -14 && current->type == 2)
+                    return (2);
+                if (cy0_analyse_char2(current->input[i]) == 2 && current->type == 4)
+                    return (3);
+                i = i + 1;
+            }
+        }
+        current = current->next;
+    }
+    return (0);
+}
 
 /*
 ** CORRECTION CRITIQUE - Bug de validation des caractères dans les quotes
@@ -49,7 +75,7 @@
 **
 ** Types dans input_type :
 ** - '5' : caractère provenant d'une expansion de variable (voir cy3_handle_dollar_word_2a)
-*/
+
 
 int	cy4_1wrong_char(t_input *head)
 {
@@ -85,6 +111,7 @@ int	cy4_1wrong_char(t_input *head)
 	}
 	return (0);
 }
+*/
 
 /*
 int	cy4_1wrong_char(t_input *head)

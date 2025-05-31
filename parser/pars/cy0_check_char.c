@@ -38,6 +38,28 @@ int	cy0_analyse_char(char c)
 	return (analyse_char(c));
 }
 
+
+int    cy0_analyse_char2(char c)
+{
+    if ((c >= '\t' && c <= '\r') || c == ' ')
+        return (-1);
+    if (c == '#' || c == '&'
+        || c == '{' || c == '}' || c == '(' || c == ')'
+        || c == '%' || c == ';' || c == '@')
+        return (1);
+    if (c == '`' || c == '\\' || c == '*' || c == '!'
+        || c == '[' || c == ']')
+        return (2);
+    if (c == '?')
+        return (-14);
+    if (c == '\'')
+        return (-2);
+    if (c == '"')
+        return (-3);
+    return (analyse_char(c));
+}
+
+/*
 int	cy0_analyse_char2(char c)
 {
 	if ((c >= '\t' && c <= '\r') || c == ' ')
@@ -54,3 +76,4 @@ int	cy0_analyse_char2(char c)
 		return (-3);
 	return (analyse_char(c));
 }
+*/

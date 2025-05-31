@@ -207,9 +207,9 @@ void	cy3_handle_dollar_brace9(t_input *current, int j, t_dollar_braces *s);
 int		cy3_handle_dollar_word(t_input *current, int i, int j, char **env);
 void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s);
 void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s);
-void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env);
+void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env, int *flag);
 int		cy3_handle_dollar_word_1(t_input *current,
-			char **env, t_dollar_word *s);
+			char **env, t_dollar_word *s, int flag);
 int		cy3_handle_dollar_word_2(t_input *current, t_dollar_word *s);
 int		cy3_handle_dollar_word_2a(t_input *current, t_dollar_word *s);
 int		cy3_handle_dollar_word_2b(t_input *current, t_dollar_word *s);
