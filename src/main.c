@@ -26,6 +26,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->in_pipe = 0;
 	shell->in_child = 0;
 	shell->current_child_pid = 0;
+	shell->should_exit = 0;
 }
 
 void	cleanup_shell(t_shell *shell)
