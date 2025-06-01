@@ -3,7 +3,7 @@
 static int	is_executable(char *path)
 {
 	struct stat	statbuf;
-	
+
 	if (stat(path, &statbuf) == -1)
 		return (0);
 	if (S_ISREG(statbuf.st_mode) && (statbuf.st_mode & S_IXUSR))

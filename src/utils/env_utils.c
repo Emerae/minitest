@@ -49,7 +49,7 @@ char	*get_env_value(char **env, char *key)
 	int		i;
 	int		key_len;
 	char	*equal_sign;
-	
+
 	if (!env || !key)
 		return (NULL);
 	key_len = ft_strlen(key);

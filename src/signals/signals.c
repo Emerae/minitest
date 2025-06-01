@@ -53,7 +53,6 @@ void	setup_child_signals(void)
 void	handle_sigint_heredoc(int sig)
 {
 	g_signal_received = sig;
-	//write(STDOUT_FILENO, "^C", 2); 
 	close(STDIN_FILENO);
 }
 

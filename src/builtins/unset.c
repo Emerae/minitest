@@ -10,16 +10,16 @@ static int	is_valid_unset_identifier(char *str)
 	if (!str || !*str)
 		return (0);
 	if (!((str[0] >= 'a' && str[0] <= 'z')
-		|| (str[0] >= 'A' && str[0] <= 'Z')
-		|| str[0] == '_'))
+			|| (str[0] >= 'A' && str[0] <= 'Z')
+			|| str[0] == '_'))
 		return (0);
 	i = 1;
 	while (str[i])
 	{
 		if (!((str[i] >= 'a' && str[i] <= 'z')
-			|| (str[i] >= 'A' && str[i] <= 'Z')
-			|| (str[i] >= '0' && str[i] <= '9')
-			|| str[i] == '_'))
+				|| (str[i] >= 'A' && str[i] <= 'Z')
+				|| (str[i] >= '0' && str[i] <= '9')
+				|| str[i] == '_'))
 			return (0);
 		i++;
 	}

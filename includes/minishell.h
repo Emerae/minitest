@@ -38,6 +38,12 @@ typedef struct s_exec
 	int		status;
 }			t_exec;
 
+typedef struct s_pipeline_data
+{
+	pid_t	*pids;
+	int		index;
+}	t_pipeline_data;
+
 /* main.c */
 void	shell_loop(t_shell *shell);
 void	init_shell(t_shell *shell, char **envp);
