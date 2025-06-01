@@ -55,7 +55,8 @@ static int	read_heredoc_loop(char *delimiter, int pipe_fd[2])
 
 	while (1)
 	{
-		line = readline("> ");
+		write(STDERR_FILENO, "> ", 2);
+		line = readline("");
 		if (!line || g_signal_received == SIGINT)
 		{
 			if (handle_heredoc_interruption(pipe_fd) == -1)

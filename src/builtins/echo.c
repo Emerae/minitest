@@ -1,9 +1,21 @@
 #include "../../includes/minishell.h"
 
-/*
-** Builtin echo command
-** Supports -n option to not print newline
-*/
+static int	is_n_option(char *arg)
+{
+	int	i;
+
+	if (!arg || arg[0] != '-' || arg[1] != 'n')
+		return (0);
+	i = 2;
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	builtin_echo(char **args)
 {
 	int	i;
@@ -11,10 +23,10 @@ int	builtin_echo(char **args)
 
 	i = 1;
 	newline = 1;
-	if (args[1] && ft_strcmp(args[1], "-n") == 0)
+	while (args[i] && is_n_option(args[i]))
 	{
 		newline = 0;
-		i = 2;
+		i++;
 	}
 	while (args[i])
 	{
