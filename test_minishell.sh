@@ -131,6 +131,38 @@ if [ ! -f "./minishell" ]; then
     exit 1
 fi
 
+echo "=== Setup Test Environment ==="
+echo -n "Creating test structure... "
+
+# Sauvegarde du répertoire original AVANT le cd
+original_test_dir=$(pwd)
+
+# Nettoyage et création de la structure de test
+cd /tmp
+rm -rf minishell_test_structure 2>/dev/null
+mkdir -p minishell_test_structure/{dir1,dir2,dir3}/{subdir1,subdir2}
+mkdir -p minishell_test_structure/dir1/subdir1/deep
+mkdir -p minishell_test_structure/dir2/.hidden
+mkdir -p minishell_test_structure/spaces\ dir/sub\ dir
+mkdir -p minishell_test_structure/dots.dir/more.dots
+
+# Fichiers pour vérifier les répertoires
+touch minishell_test_structure/dir1/file1.txt
+touch minishell_test_structure/dir2/file2.txt
+touch minishell_test_structure/dir1/subdir1/deep/deep_file.txt
+touch minishell_test_structure/spaces\ dir/space_file.txt
+
+# Structure pour tests d'erreur
+mkdir -p minishell_test_structure/error_tests/existing
+
+# Retourner dans le répertoire original pour pouvoir exécuter ./minishell
+cd "$original_test_dir"
+
+echo -e "${GREEN}DONE${NC}"
+
+# Sauvegarde du répertoire original
+original_test_dir=$(pwd)
+
 echo "=== Basic Commands ==="
 test_command "echo hello" "echo simple"
 test_command "echo hello world" "echo multiple words"
@@ -170,6 +202,175 @@ if [ "$result" = "$original_dir" ]; then
 else
     echo -e "${RED}FAIL${NC}"
     echo "  Expected: '$original_dir', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo
+echo "=== Path Normalization Tests ==="
+
+# Tests de normalisation de base
+echo -n "Testing: cd with ./ normalization... "
+result=$({
+    echo "cd /tmp/minishell_test_structure/./dir1"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/dir1" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/dir1', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo -n "Testing: cd with ../ navigation... "
+result=$({
+    echo "cd /tmp/minishell_test_structure/dir1/subdir1"
+    echo "cd ../subdir2"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/dir1/subdir2" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/dir1/subdir2', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo -n "Testing: cd complex path normalization... "
+result=$({
+    echo "cd /tmp/./minishell_test_structure/../minishell_test_structure/./dir2"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/dir2" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/dir2', Got: '$result'"
+    ((FAILED++))
+fi
+
+# Test de l'erreur qu'on a corrigée
+test_should_fail "cd /tmp/minishell_test_structure/./nonexistent/../dir1" "cd with nonexistent in path (should fail like bash)"
+
+echo
+echo "=== Multiple Slashes Tests ==="
+
+echo -n "Testing: cd with double slashes... "
+result=$({
+    echo "cd /tmp//minishell_test_structure//dir1"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/dir1" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/dir1', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo -n "Testing: cd with triple slashes... "
+result=$({
+    echo "cd ///tmp///minishell_test_structure///dir2///"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/dir2" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/dir2', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo
+echo "=== Tilde Expansion Tests ==="
+
+# Crée un répertoire de test dans HOME
+mkdir -p ~/minishell_test_home/subdir 2>/dev/null
+touch ~/minishell_test_home/test_file.txt 2>/dev/null
+
+echo -n "Testing: cd with tilde... "
+result=$({
+    echo "cd ~/minishell_test_home"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+expected="$HOME/minishell_test_home"
+if [ "$result" = "$expected" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '$expected', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo -n "Testing: ls with tilde... "
+result=$({
+    echo "ls ~/minishell_test_home"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$")
+if [[ "$result" == *"test_file.txt"* && "$result" == *"subdir"* ]]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: 'subdir and test_file.txt', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo -n "Testing: ls with tilde should fail for nonexistent... "
+output=$({
+    echo "ls ~/nonexistent_directory_12345"
+    echo "exit"
+} | ./minishell 2>&1 | grep -i "no such file\|cannot access")
+if [ -n "$output" ]; then
+    echo -e "${GREEN}CORRECTLY FAILED${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}SHOULD HAVE FAILED${NC}"
+    ((FAILED++))
+fi
+
+echo
+echo "=== Path Edge Cases ==="
+
+echo -n "Testing: cd with spaces in directory name... "
+result=$({
+    echo "cd \"/tmp/minishell_test_structure/spaces dir\""
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/spaces dir" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/spaces dir', Got: '$result'"
+    ((FAILED++))
+fi
+
+echo -n "Testing: cd with dots in directory name... "
+result=$({
+    echo "cd /tmp/minishell_test_structure/dots.dir"
+    echo "pwd"
+    echo "exit"
+} | ./minishell 2>/dev/null | grep -v "^minishell\\$" | grep -v "^exit$" | grep -v "^$" | tail -n 1)
+if [ "$result" = "/tmp/minishell_test_structure/dots.dir" ]; then
+    echo -e "${GREEN}PASS${NC}"
+    ((PASSED++))
+else
+    echo -e "${RED}FAIL${NC}"
+    echo "  Expected: '/tmp/minishell_test_structure/dots.dir', Got: '$result'"
     ((FAILED++))
 fi
 
@@ -530,6 +731,14 @@ else
     ((FAILED++))
     rm -f /tmp/test_var_redir
 fi
+
+echo
+echo "=== Cleanup Test Environment ==="
+echo -n "Cleaning up test files... "
+rm -rf /tmp/minishell_test_structure 2>/dev/null
+rm -rf ~/minishell_test_home 2>/dev/null
+cd "$original_test_dir" 2>/dev/null
+echo -e "${GREEN}DONE${NC}"
 
 echo
 echo "=== No Crash Stress Tests ==="
