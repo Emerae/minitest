@@ -15,67 +15,58 @@ void	free_string_array(char **array)
 	free(array);
 }
 
-char	*ft_strdup(const char *s)
+int	count_string_array(char **array)
 {
-	char	*dup;
-	int		len;
+	int	count;
+
+	count = 0;
+	if (!array)
+		return (0);
+	while (array[count])
+		count++;
+	return (count);
+}
+
+char	**duplicate_string_array(char **array)
+{
+	char	**dup;
+	int		count;
 	int		i;
 
-	len = ft_strlen(s);
-	dup = malloc(len + 1);
+	if (!array)
+		return (NULL);
+	count = count_string_array(array);
+	dup = malloc(sizeof(char *) * (count + 1));
 	if (!dup)
 		return (NULL);
 	i = 0;
-	while (s[i])
+	while (i < count)
 	{
-		dup[i] = s[i];
+		dup[i] = ft_strdup(array[i]);
+		if (!dup[i])
+		{
+			free_string_array(dup);
+			return (NULL);
+		}
 		i++;
 	}
-	dup[i] = '\0';
+	dup[i] = NULL;
 	return (dup);
 }
 
-size_t	ft_strlen(const char *s)
+void	error_exit(char *msg, int exit_code)
 {
-	size_t	len;
-
-	len = 0;
-	while (s[len])
-		len++;
-	return (len);
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, "\n", 1);
+	exit(exit_code);
 }
 
-int	ft_strcmp(const char *s1, const char *s2)
+void	print_error(char *cmd, char *msg)
 {
-	while (*s1 && *s2 && *s1 == *s2)
-	{
-		s1++;
-		s2++;
-	}
-	return ((unsigned char)*s1 - (unsigned char)*s2);
-}
-
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
-{
-	size_t	i;
-
-	if (n == 0)
-		return (0);
-	i = 0;
-	while (s1[i] && s2[i] && s1[i] == s2[i] && i < n - 1)
-		i++;
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	while (*s)
-	{
-		if (*s == (char)c)
-			return ((char *)s);
-		s++;
-	}
-	if ((char)c == '\0')
-		return ((char *)s);
-	return (NULL);
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, ": ", 2);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, "\n", 1);
 }

@@ -11,7 +11,7 @@ static int	is_executable(char *path)
 	return (0);
 }
 
-static char	*check_path(char *dir, char *cmd)
+char	*check_path(char *dir, char *cmd)
 {
 	char	*full_path;
 	int		dir_len;
@@ -55,30 +55,6 @@ static char	*handle_absolute_path(char *cmd)
 	return (NULL);
 }
 
-static char	*search_in_path(char *cmd, char **env)
-{
-	char	**paths;
-	char	*cmd_path;
-	int		i;
-
-	paths = get_paths_from_env(env);
-	if (!paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		cmd_path = check_path(paths[i], cmd);
-		if (cmd_path)
-		{
-			free_string_array(paths);
-			return (cmd_path);
-		}
-		i++;
-	}
-	free_string_array(paths);
-	return (NULL);
-}
-
 char	*find_command_path(char *cmd, char **env)
 {
 	if (!cmd || !*cmd)
@@ -86,13 +62,4 @@ char	*find_command_path(char *cmd, char **env)
 	if (ft_strchr(cmd, '/'))
 		return (handle_absolute_path(cmd));
 	return (search_in_path(cmd, env));
-}
-
-void	print_error(char *cmd, char *msg)
-{
-	write(STDERR_FILENO, "minishell: ", 11);
-	write(STDERR_FILENO, cmd, ft_strlen(cmd));
-	write(STDERR_FILENO, ": ", 2);
-	write(STDERR_FILENO, msg, ft_strlen(msg));
-	write(STDERR_FILENO, "\n", 1);
 }

@@ -5,35 +5,49 @@ INCLUDES	= -I./includes -I./parser
 LIBS		= -lreadline
 BUILD_DIR	= build
 
-MAIN_SRC	=	src/main.c
+MAIN_SRC	=	src/main.c \
+				src/input_utils.c \
+				src/input_processing.c
 
 EXEC_DIR	=	src/executor
 EXEC_SRC	=	$(EXEC_DIR)/executor.c \
-				$(EXEC_DIR)/pipes.c \
+				$(EXEC_DIR)/executor_builtins.c \
+				$(EXEC_DIR)/pipes_basic.c \
+				$(EXEC_DIR)/heredoc.c \
+				$(EXEC_DIR)/command_execution.c \
+				$(EXEC_DIR)/pipeline.c \
 				$(EXEC_DIR)/redirections.c \
+				$(EXEC_DIR)/redirection_utils.c \
 				$(EXEC_DIR)/path_expansion.c \
-				$(EXEC_DIR)/path.c
+				$(EXEC_DIR)/path.c \
+				$(EXEC_DIR)/path_search.c
 
 BUILTIN_DIR	=	src/builtins
 BUILTIN_SRC	=	$(BUILTIN_DIR)/echo.c \
 				$(BUILTIN_DIR)/cd.c \
+				$(BUILTIN_DIR)/cd_path.c \
+				$(BUILTIN_DIR)/cd_utils.c \
 				$(BUILTIN_DIR)/pwd.c \
 				$(BUILTIN_DIR)/export.c \
+				$(BUILTIN_DIR)/export_display.c \
 				$(BUILTIN_DIR)/unset.c \
 				$(BUILTIN_DIR)/env.c \
 				$(BUILTIN_DIR)/exit.c
 
 SIGNAL_DIR	=	src/signals
-SIGNAL_SRC	=	$(SIGNAL_DIR)/signals.c
+SIGNAL_SRC	=	$(SIGNAL_DIR)/signals.c \
+				$(SIGNAL_DIR)/signal_heredoc.c
 
 UTILS_DIR	=	src/utils
 UTILS_SRC	=	$(UTILS_DIR)/utils.c \
+				$(UTILS_DIR)/utils2.c \
 				$(UTILS_DIR)/utils_str.c \
-				$(UTILS_DIR)/utils_str2.c \
 				$(UTILS_DIR)/env_utils.c \
-				$(UTILS_DIR)/ft_split.c \
-				$(UTILS_DIR)/ft_itoa.c \
-				$(UTILS_DIR)/ft_atoi.c
+				$(UTILS_DIR)/env_modify.c \
+				$(UTILS_DIR)/utils3.c \
+				$(UTILS_DIR)/ft_split_utils.c \
+				$(UTILS_DIR)/ft_atoi_utils.c \
+				$(UTILS_DIR)/ft_split_fill.c
 
 SRCS		=	$(MAIN_SRC) \
 				$(EXEC_SRC) \

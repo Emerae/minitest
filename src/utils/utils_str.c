@@ -32,14 +32,40 @@ char	*ft_strcat(char *dst, const char *src)
 	return (dst);
 }
 
-int	count_string_array(char **array)
+char	*ft_strncpy(char *dst, const char *src, size_t n)
 {
-	int	count;
+	size_t	i;
 
-	count = 0;
-	if (!array)
-		return (0);
-	while (array[count])
-		count++;
-	return (count);
+	i = 0;
+	while (i < n && src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dst[i] = '\0';
+		i++;
+	}
+	return (dst);
+}
+
+char	*ft_strstr(const char *haystack, const char *needle)
+{
+	int	i;
+	int	j;
+
+	if (!needle[0])
+		return ((char *)haystack);
+	i = 0;
+	while (haystack[i])
+	{
+		j = 0;
+		while (haystack[i + j] == needle[j] && needle[j])
+			j++;
+		if (!needle[j])
+			return ((char *)&haystack[i]);
+		i++;
+	}
+	return (NULL);
 }
