@@ -1,8 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rlaigle <rlaigle@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/01 22:37:44 by rlaigle           #+#    #+#             */
+/*   Updated: 2025/06/01 22:37:44 by rlaigle          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
-/*
-** Check if string is numeric
-*/
 static int	is_numeric(char *str)
 {
 	int	i;
@@ -21,10 +30,6 @@ static int	is_numeric(char *str)
 	return (1);
 }
 
-/*
-** Builtin exit command
-** Exits the shell with optional exit code
-*/
 int	builtin_exit(char **args, t_shell *shell)
 {
 	int	exit_code;

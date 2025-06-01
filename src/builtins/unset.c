@@ -1,8 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rlaigle <rlaigle@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/01 22:38:30 by rlaigle           #+#    #+#             */
+/*   Updated: 2025/06/01 22:38:30 by rlaigle          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
-/*
-** Check if variable name is valid for unset
-*/
 static int	is_valid_unset_identifier(char *str)
 {
 	int	i;
@@ -26,10 +35,6 @@ static int	is_valid_unset_identifier(char *str)
 	return (1);
 }
 
-/*
-** Builtin unset command
-** Removes environment variables
-*/
 int	builtin_unset(char **args, char ***env)
 {
 	int	i;

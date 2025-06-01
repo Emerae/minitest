@@ -5,10 +5,14 @@ INCLUDES	= -I./includes -I./parser
 LIBS		= -lreadline
 BUILD_DIR	= build
 
-MAIN_SRC	=	src/main.c \
-				src/input_utils.c \
-				src/input_processing.c
+MAIN_SRC	=	src/main.c
 
+# Input processing and validation
+INPUT_DIR	=	src/input
+INPUT_SRC	=	$(INPUT_DIR)/input_processing.c \
+				$(INPUT_DIR)/input_validation.c
+
+# Executor components
 EXEC_DIR	=	src/executor
 EXEC_SRC	=	$(EXEC_DIR)/executor.c \
 				$(EXEC_DIR)/executor_builtins.c \
@@ -22,6 +26,7 @@ EXEC_SRC	=	$(EXEC_DIR)/executor.c \
 				$(EXEC_DIR)/path.c \
 				$(EXEC_DIR)/path_search.c
 
+# Built-in commands
 BUILTIN_DIR	=	src/builtins
 BUILTIN_SRC	=	$(BUILTIN_DIR)/echo.c \
 				$(BUILTIN_DIR)/cd.c \
@@ -34,27 +39,42 @@ BUILTIN_SRC	=	$(BUILTIN_DIR)/echo.c \
 				$(BUILTIN_DIR)/env.c \
 				$(BUILTIN_DIR)/exit.c
 
+# Signal handling
 SIGNAL_DIR	=	src/signals
 SIGNAL_SRC	=	$(SIGNAL_DIR)/signals.c \
 				$(SIGNAL_DIR)/signal_heredoc.c
 
-UTILS_DIR	=	src/utils
-UTILS_SRC	=	$(UTILS_DIR)/utils.c \
-				$(UTILS_DIR)/utils2.c \
-				$(UTILS_DIR)/utils_str.c \
-				$(UTILS_DIR)/env_utils.c \
-				$(UTILS_DIR)/env_modify.c \
-				$(UTILS_DIR)/utils3.c \
-				$(UTILS_DIR)/ft_split_utils.c \
-				$(UTILS_DIR)/ft_atoi_utils.c \
-				$(UTILS_DIR)/ft_split_fill.c
+# Environment management
+ENV_DIR		=	src/environment
+ENV_SRC		=	$(ENV_DIR)/env_core.c \
+				$(ENV_DIR)/env_modify.c
 
+# String manipulation functions
+STRING_DIR	=	src/string
+STRING_SRC	=	$(STRING_DIR)/string_basic.c \
+				$(STRING_DIR)/string_copy.c \
+				$(STRING_DIR)/ft_strstr.c \
+				$(STRING_DIR)/ft_atoi.c \
+				$(STRING_DIR)/ft_itoa.c \
+				$(STRING_DIR)/ft_split_utils.c \
+				$(STRING_DIR)/ft_split.c
+
+# Memory management functions
+MEMORY_DIR	=	src/memory
+MEMORY_SRC	=	$(MEMORY_DIR)/array_utils.c \
+				$(MEMORY_DIR)/cleanup.c
+
+# Combine all source files
 SRCS		=	$(MAIN_SRC) \
+				$(INPUT_SRC) \
 				$(EXEC_SRC) \
 				$(BUILTIN_SRC) \
 				$(SIGNAL_SRC) \
-				$(UTILS_SRC)
+				$(ENV_SRC) \
+				$(STRING_SRC) \
+				$(MEMORY_SRC)
 
+# Parser library (external)
 PARSER_DIR	=	parser
 PARS_DIR	=	$(PARSER_DIR)/pars
 CYUTIL_DIR	=	$(PARSER_DIR)/cyutil
@@ -101,8 +121,10 @@ PARSER_SRC  =	$(PARSER_DIR)/main.c \
 				$(CYUTIL_DIR)/cy_strlen.c \
 				$(CYUTIL_DIR)/cy_true_strdup.c
 
+# Parser library without main.c
 PARSER_LIB_SRC = $(filter-out $(PARSER_DIR)/main.c, $(PARSER_SRC))
 
+# All source files combined
 ALL_SRC		= $(SRCS) $(PARSER_LIB_SRC)
 ALL_OBJS	= $(patsubst %.c, $(BUILD_DIR)/%.o, $(ALL_SRC))
 
@@ -123,4 +145,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re norm lines test
+.PHONY: all clean fclean re

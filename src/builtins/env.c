@@ -1,9 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rlaigle <rlaigle@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/01 22:37:29 by rlaigle           #+#    #+#             */
+/*   Updated: 2025/06/01 22:37:29 by rlaigle          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
-/*
-** Builtin env command
-** Prints all environment variables
-*/
 int	builtin_env(char **env)
 {
 	int	i;

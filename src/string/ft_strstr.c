@@ -1,37 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   path_search.c                                      :+:      :+:    :+:   */
+/*   ft_strstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rlaigle <rlaigle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 22:39:58 by rlaigle           #+#    #+#             */
-/*   Updated: 2025/06/01 22:39:58 by rlaigle          ###   ########.fr       */
+/*   Created: 2025/06/01 22:41:59 by rlaigle           #+#    #+#             */
+/*   Updated: 2025/06/01 22:41:59 by rlaigle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*search_in_path(char *cmd, char **env)
+char	*ft_strstr(const char *haystack, const char *needle)
 {
-	char	**paths;
-	char	*cmd_path;
-	int		i;
+	int	i;
+	int	j;
 
-	paths = get_paths_from_env(env);
-	if (!paths)
-		return (NULL);
+	if (!needle[0])
+		return ((char *)haystack);
 	i = 0;
-	while (paths[i])
+	while (haystack[i])
 	{
-		cmd_path = check_path(paths[i], cmd);
-		if (cmd_path)
-		{
-			free_string_array(paths);
-			return (cmd_path);
-		}
+		j = 0;
+		while (haystack[i + j] == needle[j] && needle[j])
+			j++;
+		if (!needle[j])
+			return ((char *)&haystack[i]);
 		i++;
 	}
-	free_string_array(paths);
 	return (NULL);
 }
