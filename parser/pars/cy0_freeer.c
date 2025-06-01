@@ -1,36 +1,5 @@
 #include "../prser.h"
 
-void	cy0_free_env(char **env, int i)
-{
-	if (i == 0)
-	{
-		free(env);
-		return ;
-	}
-	i = i - 1;
-	while (i >= 0)
-	{
-		free(env[i]);
-		i = i - 1;
-	}
-	free(env);
-}
-
-void	cy00_free_env(char **env)
-{
-	int	i;
-
-	i = 0;
-	if (!env)
-		return ;
-	while (env[i])
-	{
-		free(env[i]);
-		i = i + 1;
-	}
-	free(env);
-}
-
 void	cy0_free_input_list(t_input *head)
 {
 	t_input	*current;

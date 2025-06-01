@@ -68,7 +68,8 @@ void	process_line(char *line, t_shell *shell)
 		return ;
 	if (validate_and_convert_syntax(head_input, &head_cmd, shell))
 		return ;
-	shell->last_exit_status = execute_command_line(head_cmd, shell);
+	if(!check_last_cmd_args_null(head_cmd))
+		shell->last_exit_status = execute_command_line(head_cmd, shell);
 	cy0_free_cmd_list(head_cmd);
 }
 

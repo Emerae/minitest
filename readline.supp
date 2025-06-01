@@ -1,0 +1,174 @@
+# Suppressions pour les "leaks" de readline
+# Ces leaks sont normaux et attendus - readline garde des structures 
+# en mémoire pour optimiser les performances
+
+{
+   readline_malloc_1
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:readline
+}
+
+{
+   readline_malloc_2
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_calloc
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:calloc
+   ...
+   fun:readline
+}
+
+{
+   readline_realloc
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:realloc
+   ...
+   fun:readline
+}
+
+{
+   readline_strdup
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:strdup
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_history_1
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:add_history
+}
+
+{
+   readline_history_2
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:*history*
+}
+
+{
+   readline_completion
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:*completion*
+}
+
+{
+   readline_rl_clear_history
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:rl_clear_history
+}
+
+{
+   readline_rl_initialize
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:rl_initialize
+}
+
+{
+   readline_tgetent
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:tgetent
+}
+
+{
+   readline_termcap
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   obj:*/libtinfo.so*
+}
+
+{
+   readline_ncurses
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   obj:*/libncurses.so*
+}
+
+{
+   readline_dlopen
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:dlopen*
+}
+
+{
+   readline_getenv
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   ...
+   fun:getenv
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_generic_libreadline
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   obj:*/libreadline.so*
+}
+
+{
+   readline_generic_libc
+   Memcheck:Leak
+   match-leak-kinds: reachable,definite,indirect,possible
+   ...
+   fun:malloc
+   obj:*/libc-*.so
+   ...
+   obj:*/libreadline.so*
+}

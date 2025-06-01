@@ -13,7 +13,6 @@ void	append_cmd3(t_cmd *new_cmd, t_cmd **current_cmd)
 			last = last->next;
 		last->next = new_cmd;
 	}
-	//printf("append_cmd3: new_cmd->args[0] = %s\n", new_cmd->args[0]);
 }
 
 int	append_cmd2(t_cmd *new_cmd, int n_delimiter, t_input **input_node)

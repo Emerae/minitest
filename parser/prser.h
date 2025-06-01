@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-# define PARSER_H
+#ifndef PRSER_H
+# define PRSER_H
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -99,20 +99,6 @@ typedef struct s_dollar_braces
 	int		p;
 }	t_dollar_braces;
 
-// typedef struct s_dollar_word {
-// 	char	*new_input;
-// 	char	*new_type;
-// 	char	*new_num;
-// 	char	*value;
-// 	int		lold;
-// 	int		vlen;
-// 	int		p;
-// 	int		k;
-// 	int		i;
-// 	int		j;
-// 	int		e;
-// } t_dollar_word;
-
 typedef struct s_dollar_word
 {
 	char	*new_input;
@@ -144,14 +130,10 @@ int		cy_strncmp(const char *s1, const char *s2, size_t n);
 void	print_input_list(t_input *head_input);
 
 char	**cy0_copy_env_from_proc(void);
-// relicat ?
-// char	**cy0_init_env(void);
 int		cy0_analyse_char(char c);
 int		cy0_analyse_char2(char c);
 int		cy0_check_quote_1(char *s);
 void	cy0_free_input_list(t_input *head);
-void	cy0_free_env(char **env, int i);
-void	cy00_free_env(char **env);
 void	cy0_free_cmd_list(t_cmd *cmd);
 int		cy00_modify_env(char ***env_ptr, int mode);
 
@@ -181,7 +163,8 @@ int		cy3_scan_dollar_syntax_1_1_2(t_input *current, int i, int j);
 int		cy3_scan_dollar_syntax_1_1(t_input *current, int i, char **env);
 int		cy3_scan_dollar_syntax_2_1_1(t_input *current, int i, int j);
 int		cy3_scan_dollar_syntax_2_1(t_input *current, int i, char **env);
-int		cy3_scan_dollar_syntax_2(t_input *current, int i, char **env, int exit_code);
+int		cy3_scan_dollar_syntax_2(t_input *current,
+			int i, char **env, int exit_code);
 int		cy3_scan_dollar_syntax_dollar_1(t_input *current,
 			int *i, char **env, int exit_code);
 int		cy3_scan_dollar_syntax_dollar_2(t_input *current,
@@ -207,7 +190,6 @@ void	cy3_handle_dollar_brace9(t_input *current, int j, t_dollar_braces *s);
 
 int		cy3_handle_dollar_word(t_input *current, int i, int j, char **env);
 void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s);
-void	cy3_handle_dollar_word_key(t_input *current, t_dollar_word *s);
 void	cy3_handle_dollar_word_findenv(t_dollar_word *s, char **env, int *flag);
 int		cy3_handle_dollar_word_1(t_input *current,
 			char **env, t_dollar_word *s, int flag);
@@ -218,16 +200,16 @@ int		cy3_handle_dollar_word_3(t_input *current, int i, int j);
 int		cy3_handle_dollar_word_3a(t_input *current, int i, t_dollar_word *s);
 int		cy3_handle_dollar_word_3b(t_input *current, int j, t_dollar_word *s);
 int		cy3_handle_dollar_alone(t_input *current, int i);
-int		cy3_handle_dollar_bang(t_input *current, int i, int j, char **env, int exit_code);
+int		cy3_handle_dollar_bang(t_input *current, int i, int j, int exit_code);
 
 int		cy4_1wrong_char(t_input *head);
 int		cy4_2wrong_redir(t_input *head);
 int		cy4_3wrong_pipe(t_input *head);
 int		cy4_4wrong_redir_log(t_input *head);
 int		cy4_5wrong_pipe_log(t_input *head);
+int		check_last_cmd_args_null(t_cmd *cmd);
 
 char	*ft_itoa(int n);
-// A delet
 void	print_cmd_list(t_cmd *head_cmd);
 void	print_input_list(t_input *head_input);
 

@@ -28,7 +28,6 @@ int	find_delimiter1(t_input **current_input,
 	{
 		if (node->input == NULL)
 		{
-			printf("Error: node->input is NULL\n");
 			break ;
 		}
 		if (find_delimiter2(node->input, nature, node->type))
@@ -37,16 +36,12 @@ int	find_delimiter1(t_input **current_input,
 		{
 			*nature = 3;
 			*current_input = node;
-			//printf("find_delimiter: ret = %d, nature = %d\n", ret, *nature);
-			//printf("current_input->input = %s\n", (*current_input)->input);
 			return (ret);
 		}
 		ret = ret + 1;
 		node = node->next;
 	}
 	*current_input = node;
-	//printf("find_delimiter: ret = %d, nature = %d\n", ret - 1, *nature);
-	//printf("current_input->input = %s\n", (*current_input)->input);
 	return (ret - 1);
 }
 
@@ -59,7 +54,6 @@ int	find_delim(t_input **current_input, int *nature)
 	ret = 1;
 	if (!current_input || !*current_input)
 	{
-		printf("Error: current_input is NULL\n");
 		return (-1);
 	}
 	return (find_delimiter1(current_input, node, nature, ret));

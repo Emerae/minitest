@@ -1,11 +1,7 @@
 #include "../prser.h"
 
-static int	cy1_make_list_1(
-	t_input **head,
-	int *start,
-	int *end,
-	char *input
-)
+static int	cy1_make_list_1(t_input **head, int *start,
+	int *end, char *input)
 {
 	int	error;
 

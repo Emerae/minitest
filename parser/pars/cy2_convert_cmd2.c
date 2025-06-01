@@ -83,7 +83,6 @@ t_cmd	*cy2_convert_cmd(t_input *head_input)
 	c.head_cmd = init_cmd();
 	if (!c.head_cmd)
 	{
-		printf("Failed alloc for head_cmd\n");
 		return (NULL);
 	}
 	c.current_cmd = c.head_cmd;
@@ -96,6 +95,6 @@ t_cmd	*cy2_convert_cmd(t_input *head_input)
 	cy2_free_first_cmd_node(&c.head_cmd);
 	return (c.head_cmd);
 }
-// nature_delimiter : numero ou NULL ou > ou |;
+// nature_delimiter : num or NULL or > or |;
 // 0 = Problem 1 = Redir , 2 = Pipe , 3 = NULL;
 // nature 1 : redir , nature 2 : pipe , nature 3 : NULL

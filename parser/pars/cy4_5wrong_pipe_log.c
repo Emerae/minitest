@@ -32,7 +32,6 @@ int	cy4_5wrong_pipe_log(t_input *head)
 			}
 		}
 		current = current->next;
-		//printf("de\n");
 	}
 	return (0);
 }
