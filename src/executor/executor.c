@@ -1,3 +1,7 @@
+
+
+
+
 #include "../../includes/minishell.h"
 
 int	is_builtin(char *cmd)
@@ -43,6 +47,34 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 static void	execute_child_process(t_cmd *cmd, t_shell *shell)
 {
 	char	*cmd_path;
+	char	**expanded_args;
+
+	setup_child_signals();
+	if (setup_redirections(cmd->redirs) == -1)
+		exit(1);
+	if (is_builtin(cmd->args[0]))
+		exit(execute_builtin(cmd, shell));
+	expanded_args = expand_args_tildes(cmd->args, shell->env);
+	if (!expanded_args)
+		exit(1);
+	cmd_path = find_command_path(expanded_args[0], shell->env);
+	if (!cmd_path)
+	{
+		print_error(expanded_args[0], "command not found");
+		free_string_array(expanded_args);
+		exit(ERROR_CMD_NOT_FOUND);
+	}
+	execve(cmd_path, expanded_args, shell->env);
+	perror("minishell: execve");
+	free(cmd_path);
+	free_string_array(expanded_args);
+	exit(ERROR_PERMISSION);
+}
+
+/*
+static void	execute_child_process(t_cmd *cmd, t_shell *shell)
+{
+	char	*cmd_path;
 
 	setup_child_signals();
 	if (setup_redirections(cmd->redirs) == -1)
@@ -60,6 +92,7 @@ static void	execute_child_process(t_cmd *cmd, t_shell *shell)
 	free(cmd_path);
 	exit(ERROR_PERMISSION);
 }
+*/
 
 static int	wait_child_process(pid_t pid)
 {
@@ -151,3 +184,4 @@ int	execute_command_line(t_cmd *cmd_list, t_shell *shell)
 		return (execute_simple_command(cmd_list, shell));
 	return (execute_pipeline(cmd_list, shell));
 }
+

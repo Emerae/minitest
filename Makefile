@@ -11,6 +11,7 @@ EXEC_DIR	=	src/executor
 EXEC_SRC	=	$(EXEC_DIR)/executor.c \
 				$(EXEC_DIR)/pipes.c \
 				$(EXEC_DIR)/redirections.c \
+				$(EXEC_DIR)/path_expansion.c \
 				$(EXEC_DIR)/path.c
 
 BUILTIN_DIR	=	src/builtins

@@ -63,6 +63,10 @@ char	*find_command_path(char *cmd, char **env);
 char	**get_paths_from_env(char **env);
 int		is_builtin(char *cmd);
 
+/* path_expansion.c */
+char	**expand_args_tildes(char **args, char **env);
+char	*expand_single_tilde(char *arg, char **env);
+
 /* builtins_manager.c */
 int		execute_builtin(t_cmd *cmd, t_shell *shell);
 
@@ -137,5 +141,6 @@ char	*ft_strcat(char *dst, const char *src);
 
 /* utils_str2.c */
 char	*ft_strncpy(char *dst, const char *src, size_t n);
+char	*ft_strstr(const char *haystack, const char *needle);
 
 #endif
