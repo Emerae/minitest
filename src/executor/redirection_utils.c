@@ -38,6 +38,28 @@ int	process_heredoc_line(char *line, char *delimiter, int pipe_fd[2])
 	return (0);
 }
 
+int	execute_redirections_only(t_cmd *cmd)
+{
+	int	saved_stdout;
+	int	saved_stdin;
+	int	result;
+
+	if (!cmd->redirs)
+		return (0);
+	saved_stdout = dup(STDOUT_FILENO);
+	saved_stdin = dup(STDIN_FILENO);
+	if (saved_stdout == -1 || saved_stdin == -1)
+		return (1);
+	result = setup_redirections(cmd->redirs);
+	dup2(saved_stdout, STDOUT_FILENO);
+	dup2(saved_stdin, STDIN_FILENO);
+	close(saved_stdout);
+	close(saved_stdin);
+	if (result == -1)
+		return (1);
+	return (0);
+}
+
 int	read_heredoc_loop(char *delimiter, int pipe_fd[2])
 {
 	char	*line;

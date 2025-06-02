@@ -71,8 +71,10 @@ static int	execute_external_command(t_cmd *cmd, t_shell *shell)
 
 int	execute_simple_command(t_cmd *cmd, t_shell *shell)
 {
-	if (!cmd || !cmd->args || !cmd->args[0])
+	if (!cmd)
 		return (0);
+	if (!cmd->args || !cmd->args[0])
+		return (execute_redirections_only(cmd));
 	if (is_builtin(cmd->args[0]))
 	{
 		if (cmd->redirs && must_run_in_parent(cmd->args[0]))

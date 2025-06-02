@@ -110,6 +110,7 @@ int				handle_heredoc_interruption(int pipe_fd[2]);
 int				process_heredoc_line(char *line, char *delimiter,
 					int pipe_fd[2]);
 int				read_heredoc_loop(char *delimiter, int pipe_fd[2]);
+int				execute_redirections_only(t_cmd *cmd);
 
 /* executor/path.c */
 char			*find_command_path(char *cmd, char **env);
