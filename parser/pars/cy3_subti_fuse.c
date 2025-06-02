@@ -42,16 +42,22 @@ static void	cy3_fuse_nospace_2(t_input *current, t_input *fusing)
 
 static int	cy3_fuse_nospace_3(t_input *current, t_input *fusing)
 {
-	int	lcurrent;
-	int	lfusing;
+	int		lcurrent;
+	int		lfusing;
+	char	*old_input;
+	char	*old_type;
+	char	*old_num;
 
 	lcurrent = cy_strlen(current->input);
 	lfusing = cy_strlen(fusing->input);
-	free(current->input);
-	free(current->input_type);
-	free(current->input_num);
+	old_input = current->input;
+	old_type = current->input_type;
+	old_num = current->input_num;
 	if (cy3_fuse_nospace_1(current, fusing, lcurrent, lfusing))
 		return (1);
+	free(old_input);
+	free(old_type);
+	free(old_num);
 	cy3_fuse_nospace_2(current, fusing);
 	return (0);
 }
